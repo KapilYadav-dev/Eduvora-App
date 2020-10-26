@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="210dp"
+            android:layout_height="82dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/ic_verify_your_account"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="23dp"
+            android:fontFamily="@font/gilroymedium"
+            android:letterSpacing="0.03"
+            android:text="We have send OTP on email id"
+            android:textColor="#808080"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="23dp"
+            android:fontFamily="@font/gilroymedium"
+            android:letterSpacing="0.03"
+            android:text="infokaydev@gmail.com"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.mukesh.OtpView
+            android:id="@+id/otp_view"
+            android:layout_width="wrap_content"
+            app:OtpItemRadius="4dp"
+            app:OtpState_filled="true"
+            app:OtpLineWidth="2dp"
+            android:layout_height="wrap_content"
+            app:OtpItemWidth="60dp"
+            app:OtpItemSpacing="10dp"
+            app:OtpItemHeight="60dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/gilroyblack"
+            android:layout_marginEnd="24dp"
+            android:inputType="number"
+            android:itemBackground="@color/white"
+            android:textColor="@color/colorAccent"
+            app:OtpItemCount="4"
+            app:OtpViewType="rectangle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEmail"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="133dp"
+            android:background="@drawable/ic_btn_one"
+            android:fontFamily="@font/gilroymedium"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/otp_view"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginEnd="23dp"
+            android:layout_marginBottom="56dp"
+            android:fontFamily="@font/gilroymedium"
+            android:letterSpacing="0.03"
+            android:text="Didn’t receive otp?"
+            android:textColor="#808080"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvResendOtp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="23dp"
+            android:fontFamily="@font/gilroymedium"
+            android:letterSpacing="0.03"
+            android:textStyle="bold"
+            android:text="Resend otp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
