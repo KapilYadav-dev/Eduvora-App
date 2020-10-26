@@ -1,4 +1,4 @@
-package in.kay.edvora;
+package in.kay.edvora.Views.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,8 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.SingleLineTransformationMethod;
 import android.view.LayoutInflater;
@@ -18,7 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import in.kay.edvora.R;
 
 public class LoginFragment extends Fragment {
     Context context;
@@ -51,7 +50,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Fragment mFragment = null;
-                mFragment = new SignupFragment();
+                mFragment = new StudentDetailFragment();
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, mFragment).commit();

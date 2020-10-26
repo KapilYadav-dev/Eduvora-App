@@ -1,8 +1,10 @@
-package in.kay.edvora;
+package in.kay.edvora.Views.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import in.kay.edvora.R;
 
 public class MainActivity extends AppCompatActivity {
 

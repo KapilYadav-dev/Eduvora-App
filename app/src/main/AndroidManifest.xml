@@ -10,9 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".BaseAuth"
+            android:name=".Views.Activity.BaseAuth"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <activity android:name=".Landing">
+        <activity android:name=".Views.Activity.Landing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Views.Activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 

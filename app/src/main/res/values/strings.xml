@@ -2,4 +2,30 @@
     <string name="app_name">Edvora</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="colleges">
+        <item>ANAND-ENGG.COLLEGE,AGRA  </item>
+        <item>FACULTY OF ENGG, AGRA COLLEGE,AGRA  </item>
+        <item>RAJA BALWANT SINGH ENGINEERING TECHNICAL CAMPUS,AGRA  </item>
+        <item>RAJA BALWANT SINGH MANAGEMENT TECHNICAL CAMPUS,AGRA  </item>
+        <item>AGRA PUBLIC INSTITUTE OF TECH. and COMPUTER EDUCATION,AGRA  </item>
+        <item>SHIVDAN SINGH INSTITUTE OF TECHNOLOGY and MANAGEMENT,ALIGARH  </item>
+        <item>UNITED COLLEGE OF ENGINEERING and RESEARCH,ALLAHABAD  </item>
+        <item>UNITED INSTITUTE OF MANAGEMENT,ALLAHABAD  </item>
+        <item>PHARMCY COLLEGE,AZAMGARH  </item>
+        <item>SHRI GOPICHAND COLLEGE OF PHARMACY,BAGPAT  </item>
+        <item>SHRI RAMMURTI SMARAK COLLEGE OF ENGG AND TECHNOLOGY,BAREILLY  </item>
+        <item>RAKSHPAL BAHADUR MANAGEMENT INSTITUTE,BAREILLY  </item>
+        <item>KUNWAR SATYA VEERA COLLEGE OF ENGG. and MANAGEMENT,BIJNAUR  </item>
+        <item>BABU BANARSI DAS INSTITUTE OF ENGG. TECH and RESEARCH CENTRE,BULANDSHAHAR  </item>
+        <item>MARATHWADA INSTT. OF TECHNOLOGY,BULANDSHAHAR  </item>
+        <item>FACULTY OF MANAGEMENT , JHUNJHUNWALADEGREE COLLEGE,FAIZABAD  </item>
+        <item>AJAY KUMAR GARG ENGG. COLLEGE,GHAZIABAD  </item>
+        <item>IDEAL INSTT. OF TECHNOLOGY,GHAZIABAD  </item>
+        <item>KIET GROUP OF INSTITUTIONS(KRISHNA INSTT. OF ENGG. and TECHNOLOGY),GHAZIABAD  </item>
+        <item>INDERPRASTHA ENGG. COLLEGE,GHAZIABAD  </item>
+        <item>ABES ENGG.COLLEGE,GHAZIABAD  </item>
+        <item>RAJ KUMAR GOEL INSTT. OF TECHNOLOGY,GHAZIABAD  </item>
+        <item>BABU BANARSI DAS INSTITUTE OF TECH.,GHAZIABAD  </item>
+        <item>INSTITUTE OF MANAGEMENT STUDIES,GHAZIABAD  </item>
+    </string-array>
 </resources>

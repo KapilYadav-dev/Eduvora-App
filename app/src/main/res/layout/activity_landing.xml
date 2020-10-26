@@ -7,12 +7,12 @@
     android:fillViewport="true"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".Landing">
+    tools:context=".Views.Activity.Landing">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Landing">
+        tools:context=".Views.Activity.Landing">
 
         <ImageView
             android:id="@+id/imageView"

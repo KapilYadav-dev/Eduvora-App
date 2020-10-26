@@ -1,14 +1,15 @@
-package in.kay.edvora;
+package in.kay.edvora.Views.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+
+import in.kay.edvora.R;
 
 public class Landing extends AppCompatActivity {
     @Override
