@@ -23,7 +23,6 @@ public class BaseAuth extends AppCompatActivity {
         } else {
             mFragment = new SignupFragment();
         }
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, mFragment).commit();

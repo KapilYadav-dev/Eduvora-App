@@ -51,5 +51,7 @@ dependencies {
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.2'
     //Power Spinner
     implementation "com.github.skydoves:powerspinner:1.1.5"
+    //Search Spinner
+    implementation 'com.github.MdFarhanRaja:SearchableSpinner:2.1'
 
 }
