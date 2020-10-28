@@ -7,7 +7,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
 public interface ApiInterface {
-    public final String BASE_URL="https://192.168.7.1:8080/";
+    String BASE_URL="http://192.168.1.7:8080/";
     @FormUrlEncoded
     @POST("auth/signup")
     Call<ResponseBody> createUser(
@@ -17,7 +17,7 @@ public interface ApiInterface {
             @Field("name") String name);
 
     @FormUrlEncoded
-    @POST("auth/signup/otp")
+    @POST("auth/verifyotp")
     Call<ResponseBody> verifyOtp(
             @Field("email") String email,
             @Field("otp") String otp);
