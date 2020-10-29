@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -45,7 +46,7 @@
             android:layout_marginTop="241dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/selector_et"
-            android:drawablePadding="11dp"
+            android:drawableEnd="@drawable/ic_spinner_drop"
             android:fontFamily="@font/gilroymedium"
             android:hint="Select your college"
             android:padding="16dp"
@@ -56,5 +57,68 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:weightSum="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_college"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/et_branch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_et"
+                android:drawableEnd="@drawable/ic_spinner_drop"
+                android:ellipsize="end"
+                android:fontFamily="@font/gilroymedium"
+                android:hint="Branch"
+                android:letterSpacing="0.03"
+                android:maxLines="1"
+                android:padding="16dp"
+                android:textColor="#000" />
+
+            <TextView
+                android:id="@+id/et_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_et"
+                android:drawableEnd="@drawable/ic_spinner_drop"
+                android:ellipsize="end"
+                android:fontFamily="@font/gilroymedium"
+                android:hint="Year"
+                android:letterSpacing="0.03"
+                android:maxLines="1"
+                android:padding="16dp"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/ic_btn_one"
+            android:fontFamily="@font/gilroymedium"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -6,9 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
 import in.kay.edvora.R;
+import in.kay.edvora.Views.Fragments.FacultyDetailFragment;
 import in.kay.edvora.Views.Fragments.LoginFragment;
+import in.kay.edvora.Views.Fragments.OtpFragment;
 import in.kay.edvora.Views.Fragments.SignupFragment;
+import in.kay.edvora.Views.Fragments.StudentDetailFragment;
 
 public class BaseAuth extends AppCompatActivity {
 
@@ -20,7 +25,7 @@ public class BaseAuth extends AppCompatActivity {
         Fragment mFragment = null;
         if (from.equalsIgnoreCase("Login")) {
             mFragment = new LoginFragment();
-        } else {
+        } else if (from.equalsIgnoreCase("signup")){
             mFragment = new SignupFragment();
         }
         FragmentManager fragmentManager = getSupportFragmentManager();

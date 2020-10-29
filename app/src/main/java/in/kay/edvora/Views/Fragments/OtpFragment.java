@@ -2,7 +2,6 @@ package in.kay.edvora.Views.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,6 +17,10 @@ import androidx.fragment.app.FragmentManager;
 
 import com.mukesh.OnOtpCompletionListener;
 import com.mukesh.OtpView;
+import com.pixplicity.easyprefs.library.Prefs;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -90,8 +92,16 @@ public class OtpFragment extends Fragment {
                     if (response.isSuccessful()) {
                         pd.dismiss();
                         Fragment mFragment = null;
+                        String str=response.body().string();
+                        JSONObject jsonObject=new JSONObject(str);
+                        String refreshToken=jsonObject.getString("refreshToken");
+                        String accessToken=jsonObject.getString("accessToken");
+                        Prefs.putBoolean("isLoggedIn",true);
+                        Prefs.putString("userType",userType);
+                        Prefs.putString("refreshToken",refreshToken);
+                        Prefs.putString("accessToken",accessToken);
                         if (userType.equalsIgnoreCase("student")) mFragment = new StudentDetailFragment();
-                        else mFragment = new StudentDetailFragment();
+                        else mFragment = new FacultyDetailFragment();
                         FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.container, mFragment).commit();
@@ -100,7 +110,7 @@ public class OtpFragment extends Fragment {
                         pd.dismiss();
                         Toast.makeText(context, "Error" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     }
-                } catch (IOException e) {
+                } catch (IOException | JSONException e) {
                     pd.dismiss();
                 }
             }

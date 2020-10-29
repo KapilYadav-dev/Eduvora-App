@@ -163,7 +163,7 @@ public class SignupFragment extends Fragment {
                     }
                     else {
                         pd.dismiss();
-                        Toast.makeText(context, "Sucess" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Success" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
                     pd.dismiss();
