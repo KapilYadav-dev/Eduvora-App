@@ -12,13 +12,17 @@ public interface ApiInterface {
     String BASE_URL = "http://192.168.1.7:8080/";
 
     @FormUrlEncoded
+    @POST("auth/login")
+    Call<ResponseBody> loginUser(
+            @Field("email") String email,
+            @Field("password") String password);
+    @FormUrlEncoded
     @POST("auth/signup")
     Call<ResponseBody> createUser(
             @Field("email") String email,
             @Field("password") String password,
             @Field("userType") String userType,
             @Field("name") String name);
-
     @FormUrlEncoded
     @POST("profile/update")
     Call<ResponseBody> updateUser(
@@ -26,7 +30,6 @@ public interface ApiInterface {
             @Field("branch") String branch,
             @Field("year") int year,
             @Header("Authorization") String header);
-
     @FormUrlEncoded
     @POST("auth/verifyotp")
     Call<ResponseBody> verifyOtp(
