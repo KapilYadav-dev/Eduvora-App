@@ -17,12 +17,12 @@ public class Landing extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_landing);
         if (Prefs.getBoolean("isLoggedIn",false) && Prefs.getBoolean("isProfileComplete",false) )
         {
             startActivity(new Intent(this,MainActivity.class));
         }
         else {
+            setContentView(R.layout.activity_landing);
             YoYo.with(Techniques.Bounce)
                     .duration(2000)
                     .repeat(YoYo.INFINITE)

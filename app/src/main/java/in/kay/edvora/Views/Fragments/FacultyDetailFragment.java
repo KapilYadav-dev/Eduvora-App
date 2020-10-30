@@ -1,61 +1,53 @@
 package in.kay.edvora.Views.Fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
+import in.galaxyofandroid.spinerdialog.SpinnerDialog;
+import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Views.Activity.MainActivity;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FacultyDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FacultyDetailFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public FacultyDetailFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FacultyDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FacultyDetailFragment newInstance(String param1, String param2) {
-        FacultyDetailFragment fragment = new FacultyDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    SpinnerDialog spinnerDialog;
+    Context mcontext;
+    View view;
+    ArrayList<String> colleges = new ArrayList<>();
+    ArrayList<String> department = new ArrayList<>();
+    String choosen;
+    Button btnSave;
+    TextView etCollege, etDept;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,4 +55,214 @@ public class FacultyDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_faculty_detail, container, false);
     }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mcontext = context;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
+        Initz();
+    }
+    private void Initz() {
+        etCollege = view.findViewById(R.id.et_college);
+        etDept = view.findViewById(R.id.et_department);
+        btnSave=view.findViewById(R.id.btn_save);
+        etCollege.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShowPopUpCollege();
+            }
+        });
+        etDept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShowPopUpDept();
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Savedata();
+            }
+        });
+
+    }
+
+    private void Savedata() {
+        final ProgressDialog pd = new ProgressDialog(mcontext);
+        pd.setMax(100);
+        pd.setMessage("Saving...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.updateUser(etCollege.getText().toString(), etDept.getText().toString(),0, "Bearer " + Prefs.getString("accessToken", ""));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    //Welcome user
+                    Toast.makeText(mcontext, "Welcome.", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(mcontext, MainActivity.class));
+                    Prefs.putBoolean("isProfileComplete", true);
+                } else if (response.code() == 502) {
+                    //Call for new token using Refresh Token
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void ShowPopUpDept() {
+        final ProgressDialog pd = new ProgressDialog(mcontext);
+        pd.setMax(100);
+        pd.setMessage("Loading...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.getDept();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        JSONObject jsonObject = new JSONObject(str);
+                        JSONArray jsonArray = jsonObject.getJSONArray("list");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String clgname = object.getString("name");
+                            department.add(clgname);
+                        }
+                        ArrayList<String> arrayList = new ArrayList<>();
+                        DoWorkDept();
+                    } else {
+                        //Server error Response
+                    }
+                    pd.dismiss();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    pd.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //Server error Response
+                pd.dismiss();
+                Toast.makeText(mcontext, "Error is " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void DoWorkDept() {
+        spinnerDialog = new SpinnerDialog((Activity) mcontext, department, "Select your college", R.style.DialogAnimations, "");// With 	Animation
+        spinnerDialog.setCancellable(true); // for cancellable
+        spinnerDialog.setShowKeyboard(false);// for open keyboard by default
+        spinnerDialog.setItemColor(Color.parseColor("#263238"));
+        spinnerDialog.showSpinerDialog();
+        spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
+            @Override
+            public void onClick(String item, int position) {
+                choosen = item;
+                department.clear();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        etDept.setText(choosen);
+                        etDept.setTextColor(getResources().getColor(R.color.colorBlack));
+                    }
+                });
+            }
+        });
+    }
+
+    private void ShowPopUpCollege() {
+        final ProgressDialog pd = new ProgressDialog(mcontext);
+        pd.setMax(100);
+        pd.setMessage("Loading...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.getColleges();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        JSONObject jsonObject = new JSONObject(str);
+                        JSONArray jsonArray = jsonObject.getJSONArray("list");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String clgname = object.getString("name");
+                            colleges.add(clgname);
+                        }
+                        ArrayList<String> arrayList = new ArrayList<>();
+                        DoWorkCollege();
+                    } else {
+                        //Server error Response
+                    }
+                    pd.dismiss();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    pd.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //Server error Response
+                pd.dismiss();
+                Toast.makeText(mcontext, "Error is " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void DoWorkCollege() {
+        spinnerDialog = new SpinnerDialog((Activity) mcontext, colleges, "Select your college", R.style.DialogAnimations, "");// With 	Animation
+        spinnerDialog.setCancellable(true); // for cancellable
+        spinnerDialog.setShowKeyboard(false);// for open keyboard by default
+        spinnerDialog.setItemColor(Color.parseColor("#263238"));
+        spinnerDialog.showSpinerDialog();
+        spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
+            @Override
+            public void onClick(String item, int position) {
+                choosen = item;
+                colleges.clear();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        etCollege.setText(choosen);
+                        etCollege.setTextColor(getResources().getColor(R.color.colorBlack));
+                    }
+                });
+            }
+        });
+    }
+
 }

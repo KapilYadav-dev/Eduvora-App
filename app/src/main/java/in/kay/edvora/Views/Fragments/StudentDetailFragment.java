@@ -3,8 +3,10 @@ package in.kay.edvora.Views.Fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Views.Activity.MainActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -110,18 +113,50 @@ public class StudentDetailFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<ResponseBody> call = apiInterface.updateUser(etCollege.getText().toString(),etBranch.getText().toString(),2,"Bearer " + Prefs.getString("accessToken",""));
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(mcontext, "Code is "+response.code(), Toast.LENGTH_SHORT).show();
+        if (!(TextUtils.isEmpty(etCollege.getText().toString()) && TextUtils.isEmpty(etBranch.getText().toString()) && TextUtils.isEmpty(etYear.getText().toString()))) {
+            String etTxt;
+            Integer year = null;
+            etTxt=etYear.getText().toString();
+            if (etTxt.equalsIgnoreCase("1st Year"))
+            {
+                year=1;
             }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+            else if (etTxt.equalsIgnoreCase("2nd Year"))
+            {
+                year=2;
             }
-        });
+            else if (etTxt.equalsIgnoreCase("3rd Year"))
+            {
+                year=3;
+            }
+            else if (etTxt.equalsIgnoreCase("Final Year")){
+                year=4;
+            }
+            Call<ResponseBody> call = apiInterface.updateUser(etCollege.getText().toString(), etBranch.getText().toString(), year, "Bearer " + Prefs.getString("accessToken", ""));
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        //Welcome user
+                        Toast.makeText(mcontext, "Welcome.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(mcontext, MainActivity.class));
+                        Prefs.putBoolean("isProfileComplete", true);
+                    } else if (response.code() == 502) {
+                        //Call for new token using Refresh Token
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
+        else {
+            Toast.makeText(mcontext, "Please choose all fields.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void ShowPopUpBranch() {

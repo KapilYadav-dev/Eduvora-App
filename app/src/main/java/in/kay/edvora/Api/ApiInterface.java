@@ -39,4 +39,7 @@ public interface ApiInterface {
     @GET("admin/listbranches")
     Call<ResponseBody> getBranches();
 
+    @GET("admin/listdepartments")
+    Call<ResponseBody> getDept();
+
 }
