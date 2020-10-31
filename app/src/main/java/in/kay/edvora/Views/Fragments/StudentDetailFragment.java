@@ -137,20 +137,29 @@ public class StudentDetailFragment extends Fragment {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
+                        pd.dismiss();
                         //Welcome user
                         Toast.makeText(mcontext, "Welcome.", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(mcontext, MainActivity.class));
                         Prefs.putBoolean("isProfileComplete", true);
                     } else if (response.code() == 502) {
+                        pd.dismiss();
+                        Toast.makeText(mcontext, "Error 502", Toast.LENGTH_SHORT).show();
                         //Call for new token using Refresh Token
                     } else {
-
+                        pd.dismiss();
+                        try {
+                            Toast.makeText(mcontext, "Error is "+response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                    pd.dismiss();
+                    Toast.makeText(mcontext, "Error is "+t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

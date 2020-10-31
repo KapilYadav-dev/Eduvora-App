@@ -40,7 +40,7 @@
             android:drawablePadding="11dp"
             android:fontFamily="@font/gilroymedium"
             android:hint="Enter your email"
-            android:inputType="textEmailAddress|textCapCharacters"
+            android:inputType="textEmailAddress"
             android:padding="16dp"
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="parent"

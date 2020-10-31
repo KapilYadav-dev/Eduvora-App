@@ -7,7 +7,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.SingleLineTransformationMethod;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -62,10 +65,35 @@ public class SignupFragment extends Fragment {
         etPassword = view.findViewById(R.id.et_password);
         btnSignUp = view.findViewById(R.id.btn_sign_up);
         IvLoginLogic();
+        ShowPasswordLogic();
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LoginFn();
+            }
+        });
+    }
+
+    private void ShowPasswordLogic() {
+        etPassword.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (etPassword.getRight() - etPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if (etPassword.getTransformationMethod().getClass().getSimpleName() .equals("PasswordTransformationMethod")) {
+                            etPassword.setTransformationMethod(new SingleLineTransformationMethod());
+                        }
+                        else {
+                            etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                        }
+
+                        etPassword.setSelection(etPassword.getText().length());
+                        return true;
+                    }
+                }
+                return false;
             }
         });
     }

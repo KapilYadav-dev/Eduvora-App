@@ -110,19 +110,22 @@ public class FacultyDetailFragment extends Fragment {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     //Welcome user
+                    pd.dismiss();
                     Toast.makeText(mcontext, "Welcome.", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(mcontext, MainActivity.class));
                     Prefs.putBoolean("isProfileComplete", true);
                 } else if (response.code() == 502) {
+                    pd.dismiss();
                     //Call for new token using Refresh Token
                 } else {
+                    pd.dismiss();
 
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                pd.dismiss();
             }
         });
     }

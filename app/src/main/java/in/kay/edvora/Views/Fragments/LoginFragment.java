@@ -94,16 +94,35 @@ public class LoginFragment extends Fragment {
                        pd.dismiss();
                        String string= response.body().string();
                        JSONObject jsonObject=new JSONObject(string);
-                       Prefs.putString("userType",jsonObject.getString("type"));
-                       Prefs.putString("accessToken",jsonObject.getString("accessToken"));
-                       Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
-                       Prefs.putBoolean("isLoggedIn",true);
-                       Toast.makeText(context, "Welcome "+jsonObject.getString("email"), Toast.LENGTH_SHORT).show();
-                       startActivity(new Intent(context, MainActivity.class));
+                       if (jsonObject.getString("isProfileComplete").equalsIgnoreCase("true"))
+                       {
+                           Prefs.putString("userType",jsonObject.getString("type"));
+                           Prefs.putString("accessToken",jsonObject.getString("accessToken"));
+                           Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
+                           Prefs.putBoolean("isLoggedIn",true);
+                           Toast.makeText(context, "Welcome "+jsonObject.getString("email"), Toast.LENGTH_SHORT).show();
+                           startActivity(new Intent(context, MainActivity.class));
+                       }
+                       else {
+                           Prefs.putString("userType",jsonObject.getString("type"));
+                           Prefs.putString("accessToken",jsonObject.getString("accessToken"));
+                           Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
+                           Toast.makeText(context, "Please complete your profile first..", Toast.LENGTH_SHORT).show();
+                           Fragment mFragment = null;
+                           if (jsonObject.getString("type").equalsIgnoreCase("student"))
+                               mFragment = new StudentDetailFragment();
+                           else
+                               mFragment=new FacultyDetailFragment();
+
+                           FragmentManager fragmentManager = getFragmentManager();
+                           fragmentManager.beginTransaction()
+                                   .replace(R.id.container, mFragment).commit();
+                       }
                    }
                    else if (response.code()==403)
                    {
                        pd.dismiss();
+                       Toast.makeText(context, "Please verify OTP first...", Toast.LENGTH_SHORT).show();
                        Fragment mFragment = null;
                        mFragment = new OtpFragment();
                        FragmentManager fragmentManager = getFragmentManager();
@@ -137,7 +156,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Fragment mFragment = null;
-                mFragment = new StudentDetailFragment();
+                mFragment = new SignupFragment();
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, mFragment).commit();
@@ -168,7 +187,6 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
