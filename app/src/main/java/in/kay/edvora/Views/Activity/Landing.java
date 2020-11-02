@@ -11,6 +11,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Fragments.StudentDetailFragment;
 
 public class Landing extends AppCompatActivity {
@@ -22,6 +23,7 @@ public class Landing extends AppCompatActivity {
                     .duration(2000)
                     .repeat(YoYo.INFINITE)
                     .playOn(findViewById(R.id.anim));
+
     }
 
     public void SignUpFragment(View view) {

@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#33CC99</color>
     <color name="colorAccent">#33CC99</color>
     <color name="white">#FFFFFF</color>
+    <color name="homeback">#f4f6fa</color>
 </resources>

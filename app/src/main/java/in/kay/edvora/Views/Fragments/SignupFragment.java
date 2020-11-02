@@ -26,8 +26,10 @@ import androidx.fragment.app.FragmentManager;
 
 import java.io.IOException;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +42,7 @@ public class SignupFragment extends Fragment {
     View view;
     ImageView ivLogin;
     EditText etName, etEmail, etPassword;
-    Button btnSignUp;
+    CircularProgressButton btnSignUp;
     Dialog dialog;
     String userType;
 
@@ -141,7 +143,8 @@ public class SignupFragment extends Fragment {
                     dialog.dismiss();
                     DoWork();
                 } else {
-                    Toast.makeText(context, "Please choose at-least one user...", Toast.LENGTH_SHORT).show();
+                    CustomToast customToast=new CustomToast();
+                    customToast.ShowToast(context,"Please choose at-least one user");
                 }
             }
         });
@@ -160,12 +163,7 @@ public class SignupFragment extends Fragment {
     }
 
     private void DoWork() {
-        final ProgressDialog pd = new ProgressDialog( context);
-        pd.setMax(100);
-        pd.setMessage("Setting you...");
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.show();
-        pd.setCancelable(false);
+        btnSignUp.startAnimation();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -177,7 +175,7 @@ public class SignupFragment extends Fragment {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     if (response.isSuccessful()) {
-                        pd.dismiss();
+                       btnSignUp.revertAnimation();
                         Fragment mFragment = null;
                         mFragment = new OtpFragment();
                         FragmentManager fragmentManager = getFragmentManager();
@@ -190,17 +188,17 @@ public class SignupFragment extends Fragment {
 
                     }
                     else {
-                        pd.dismiss();
+                        btnSignUp.revertAnimation();
                         Toast.makeText(context, "Success" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
-                    pd.dismiss();
+                    btnSignUp.revertAnimation();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                pd.dismiss();
+                btnSignUp.revertAnimation();
                 Toast.makeText(context, "Exception error " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

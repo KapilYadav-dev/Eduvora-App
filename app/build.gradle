@@ -53,4 +53,6 @@ dependencies {
     implementation 'com.github.MdFarhanRaja:SearchableSpinner:2.1'
     //EasyPref
     implementation 'com.pixplicity.easyprefs:library:1.9.0'
+    //Bottom nav bar
+    implementation 'nl.joery.animatedbottombar:library:1.0.9'
 }

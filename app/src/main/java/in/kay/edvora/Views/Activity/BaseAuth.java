@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Fragments.FacultyDetailFragment;
 import in.kay.edvora.Views.Fragments.LoginFragment;
 import in.kay.edvora.Views.Fragments.OtpFragment;

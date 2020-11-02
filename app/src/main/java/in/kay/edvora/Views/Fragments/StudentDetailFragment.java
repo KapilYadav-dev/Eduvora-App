@@ -31,6 +31,7 @@ import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Activity.MainActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -164,7 +165,8 @@ public class StudentDetailFragment extends Fragment {
             });
         }
         else {
-            Toast.makeText(mcontext, "Please choose all fields.", Toast.LENGTH_SHORT).show();
+            CustomToast customToast=new CustomToast();
+            customToast.ShowToast(mcontext,"Please choose all fields.");
         }
     }
 

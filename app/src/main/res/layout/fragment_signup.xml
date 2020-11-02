@@ -98,11 +98,12 @@
             app:layout_constraintTop_toBottomOf="@+id/et_email"
             app:layout_constraintVertical_bias="0.0" />
 
-        <Button
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            app:spinning_bar_color="@color/white"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="133dp"

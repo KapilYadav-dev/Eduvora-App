@@ -28,8 +28,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Activity.MainActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,7 +45,7 @@ public class LoginFragment extends Fragment {
     EditText etEmail,etPassword;
     View view;
     ImageView ivSignUp;
-    Button btnLogin;
+    CircularProgressButton btnLogin;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -67,18 +69,13 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btnLogin.startAnimation();
                 DoWork();
             }
         });
     }
 
     private void DoWork() {
-        final ProgressDialog pd = new ProgressDialog( context);
-        pd.setMax(100);
-        pd.setMessage("Logging you...");
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.show();
-        pd.setCancelable(false);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -91,7 +88,7 @@ public class LoginFragment extends Fragment {
                try {
                    if (response.isSuccessful())
                    {
-                       pd.dismiss();
+                       btnLogin.revertAnimation();
                        String string= response.body().string();
                        JSONObject jsonObject=new JSONObject(string);
                        if (jsonObject.getString("isProfileComplete").equalsIgnoreCase("true"))
@@ -100,14 +97,17 @@ public class LoginFragment extends Fragment {
                            Prefs.putString("accessToken",jsonObject.getString("accessToken"));
                            Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
                            Prefs.putBoolean("isLoggedIn",true);
-                           Toast.makeText(context, "Welcome "+jsonObject.getString("email"), Toast.LENGTH_SHORT).show();
+                           Prefs.putBoolean("isProfileComplete",true);
+                           CustomToast customToast=new CustomToast();
+                           customToast.ShowToast(context,"Welcome "+jsonObject.getString("email"));
                            startActivity(new Intent(context, MainActivity.class));
                        }
                        else {
                            Prefs.putString("userType",jsonObject.getString("type"));
                            Prefs.putString("accessToken",jsonObject.getString("accessToken"));
                            Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
-                           Toast.makeText(context, "Please complete your profile first..", Toast.LENGTH_SHORT).show();
+                           CustomToast customToast=new CustomToast();
+                           customToast.ShowToast(context,"Please complete your profile first..");
                            Fragment mFragment = null;
                            if (jsonObject.getString("type").equalsIgnoreCase("student"))
                                mFragment = new StudentDetailFragment();
@@ -121,8 +121,9 @@ public class LoginFragment extends Fragment {
                    }
                    else if (response.code()==403)
                    {
-                       pd.dismiss();
-                       Toast.makeText(context, "Please verify OTP first...", Toast.LENGTH_SHORT).show();
+                    btnLogin.revertAnimation();
+                       CustomToast customToast=new CustomToast();
+                       customToast.ShowToast(context,"Please verify OTP first...");
                        Fragment mFragment = null;
                        mFragment = new OtpFragment();
                        FragmentManager fragmentManager = getFragmentManager();
@@ -134,19 +135,20 @@ public class LoginFragment extends Fragment {
                                .replace(R.id.container, mFragment).commit();
                    }
                    else {
-                       pd.dismiss();
-                       Toast.makeText(context, "User doesn't exist.", Toast.LENGTH_SHORT).show();
+                    btnLogin.revertAnimation();
+                       CustomToast customToast=new CustomToast();
+                       customToast.ShowToast(context,"User doesnt exist or wrong password...");
                    }
                }
                catch (IOException | JSONException e)
                {
-                   pd.dismiss();
+                btnLogin.revertAnimation();
                }
            }
 
            @Override
            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+               btnLogin.revertAnimation();
            }
        });
     }

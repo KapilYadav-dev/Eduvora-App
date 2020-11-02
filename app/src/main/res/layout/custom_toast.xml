@@ -1,0 +1,20 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/custom_toast_container"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:elevation="50dp"
+    android:backgroundTint="#E6C2C2C2"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    app:cardCornerRadius="2dp">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="4dp"
+        android:fontFamily="@font/gilroymedium"
+        android:textColor="@color/black" />
+</androidx.cardview.widget.CardView>

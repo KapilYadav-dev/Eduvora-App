@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,7 @@ import java.io.IOException;
 
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OtpFragment extends Fragment {
     Context context;
-    TextView tvEmail;
+    TextView tvEmail,tvTimer;
     OtpView otpView;
     Button btnNext;
     View view;
@@ -54,6 +57,7 @@ public class OtpFragment extends Fragment {
         userType = getArguments().getString("userType");
         this.view=view;
         tvEmail=view.findViewById(R.id.tvEmail);
+        tvTimer=view.findViewById(R.id.tv_timer);
         tvEmail.setText(value);
         btnNext=view.findViewById(R.id.btn_next);
         btnNext.setTextColor(Color.WHITE);
@@ -70,6 +74,30 @@ public class OtpFragment extends Fragment {
                 });
             }
         });
+        CountdownLogic();
+        tvTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"OTP send successfully...");
+            }
+        });
+    }
+
+    private void CountdownLogic() {
+        new CountDownTimer(60000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                tvTimer.setText("Time remaining: 00:" +millisUntilFinished / 1000);
+                tvTimer.setClickable(false);
+            }
+
+            public void onFinish() {
+                tvTimer.setText("Resend");
+                tvTimer.setClickable(true);
+            }
+
+        }.start();
     }
 
     private void DoWork(String otp) {

@@ -8,4 +8,10 @@
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
     </style>
     <style name="DialogAnimations" />
+
+    <style name="bottombar">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">@font/gilroybold</item>
+        <item name="android:textSize">14dp</item>
+    </style>
 </resources>
