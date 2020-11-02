@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.R;
 import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Activity.MainActivity;
@@ -117,7 +118,6 @@ public class FacultyDetailFragment extends Fragment {
                     startActivity(new Intent(mcontext, MainActivity.class));
                     Prefs.putBoolean("isProfileComplete", true);
                 } else if (response.code() == 502) {
-                    pd.dismiss();
                     //Call for new token using Refresh Token
                 } else {
                     pd.dismiss();

@@ -1,5 +1,8 @@
 package in.kay.edvora.Api;
 
+import java.util.List;
+
+import in.kay.edvora.Models.HomeModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -16,6 +19,7 @@ public interface ApiInterface {
     Call<ResponseBody> loginUser(
             @Field("email") String email,
             @Field("password") String password);
+
     @FormUrlEncoded
     @POST("auth/signup")
     Call<ResponseBody> createUser(
@@ -23,6 +27,7 @@ public interface ApiInterface {
             @Field("password") String password,
             @Field("userType") String userType,
             @Field("name") String name);
+
     @FormUrlEncoded
     @POST("profile/update")
     Call<ResponseBody> updateUser(
@@ -30,6 +35,7 @@ public interface ApiInterface {
             @Field("branch") String branch,
             @Field("year") int year,
             @Header("Authorization") String header);
+
     @FormUrlEncoded
     @POST("auth/verifyotp")
     Call<ResponseBody> verifyOtp(
@@ -44,5 +50,12 @@ public interface ApiInterface {
 
     @GET("admin/listdepartments")
     Call<ResponseBody> getDept();
+
+    @GET("feed/view")
+    Call<List<HomeModel>> getFeed(@Header("Authorization") String header);
+
+    @POST("auth/getaccesstoken")
+    Call<ResponseBody> getNewToken(@Header("Authorization") String header);
+
 
 }

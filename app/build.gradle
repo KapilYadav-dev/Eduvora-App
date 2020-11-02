@@ -25,8 +25,10 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -35,8 +37,8 @@ dependencies {
     //Gif Image View
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     //CardView
@@ -55,4 +57,9 @@ dependencies {
     implementation 'com.pixplicity.easyprefs:library:1.9.0'
     //Bottom nav bar
     implementation 'nl.joery.animatedbottombar:library:1.0.9'
+    //MVVM
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    //PullToRefresh
+    implementation 'com.yalantis:phoenix:1.2.3'
 }
