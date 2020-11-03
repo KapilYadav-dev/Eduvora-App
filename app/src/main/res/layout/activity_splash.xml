@@ -8,40 +8,19 @@
     tools:context=".Views.Activity.Splash">
 
 
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:src="@drawable/ic_launcher_foreground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-    <ImageView
-        android:id="@+id/bv"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:src="@drawable/ic_illustration_bacground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/gilroybold"
-        android:text="Edvora"
-        android:textColor="@color/colorPrimary"
-        android:textSize="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/splash" />
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"

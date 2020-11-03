@@ -7,14 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".Views.Fragments.HomeFragment">
 
-    <com.yalantis.phoenix.PullToRefreshView
-        android:id="@+id/pull_to_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <com.facebook.shimmer.ShimmerFrameLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:shimmer="http://schemas.android.com/tools"
+            android:id="@+id/shimmerFrameLayout"
+            android:layout_width="wrap_content"
+            android:layerType="software"
+            android:layout_height="wrap_content"
+            shimmer:duration="1000">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            <include layout="@layout/shimmer_post_view"/>
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.yalantis.phoenix.PullToRefreshView>
 </FrameLayout>

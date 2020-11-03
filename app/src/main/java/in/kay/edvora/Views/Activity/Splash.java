@@ -18,10 +18,6 @@ public class Splash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        YoYo.with(Techniques.Bounce)
-                .duration(2000)
-                .repeat(YoYo.INFINITE)
-                .playOn(findViewById(R.id.iv));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -34,6 +30,6 @@ public class Splash extends AppCompatActivity {
                     finish();
                 }
             }
-        }, 4000);
+        }, 2500);
     }
 }

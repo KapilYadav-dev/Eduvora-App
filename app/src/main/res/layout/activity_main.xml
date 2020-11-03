@@ -26,11 +26,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:fontFamily="@font/gilroyblack"
-                android:text="@string/app_name"
+                android:layout_marginLeft="20dp"
+                android:fontFamily="@font/gilroybold"
+                android:text="@string/my_app_name"
                 android:textColor="@color/black"
-                android:textSize="24dp" />
+                android:textSize="30dp" />
         </RelativeLayout>
     </Toolbar>
 

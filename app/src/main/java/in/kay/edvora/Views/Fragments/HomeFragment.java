@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class HomeFragment extends Fragment {
     View view;
     RecyclerView recyclerView;
     HomeFeedAdapter adapter;
-
+    ShimmerFrameLayout shimmerFrameLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,28 +53,20 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
         homeViewModel = ViewModelProviders.of((FragmentActivity) context).get(HomeViewModel.class);
-        final PullToRefreshView mPullToRefreshView = view.findViewById(R.id.pull_to_refresh);
         LoadData();
-        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPullToRefreshView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPullToRefreshView.setRefreshing(false);
-                        LoadData();
-                    }
-                }, 2000);
-            }
-        });
     }
 
     private void LoadData() {
-        homeViewModel.getFeed().observe((LifecycleOwner) context, new Observer<List<HomeModel>>() {
+        homeViewModel.getFeed(context).observe((LifecycleOwner) context, new Observer<List<HomeModel>>() {
             @Override
             public void onChanged(List<HomeModel> homeModels) {
                 adapter = new HomeFeedAdapter(homeModels, context);
+                shimmerFrameLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }

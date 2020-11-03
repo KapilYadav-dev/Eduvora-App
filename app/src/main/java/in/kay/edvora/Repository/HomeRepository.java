@@ -1,5 +1,6 @@
 package in.kay.edvora.Repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -13,6 +14,7 @@ import java.util.List;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.Models.HomeModel;
+import in.kay.edvora.Utils.CustomToast;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,9 +24,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeRepository {
     private MutableLiveData<List<HomeModel>> feedlist;
-
-    public HomeRepository(MutableLiveData<List<HomeModel>> feedlist) {
+    Context context;
+    public HomeRepository(MutableLiveData<List<HomeModel>> feedlist, Context context) {
         this.feedlist = feedlist;
+        this.context=context;
     }
     public MutableLiveData<List<HomeModel>> LoadFeed (){
         Retrofit retrofit = new Retrofit.Builder()
@@ -55,7 +58,8 @@ public class HomeRepository {
 
             @Override
             public void onFailure(Call<List<HomeModel>> call, Throwable t) {
-                Log.d("RESPONSECODE", "onFailure: "+t.getLocalizedMessage());
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,t.getLocalizedMessage());
             }
         });
         return feedlist;

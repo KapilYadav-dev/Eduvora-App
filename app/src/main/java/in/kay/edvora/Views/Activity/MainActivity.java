@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void SwitchFragement() {
         if (mFragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
