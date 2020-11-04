@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/homeback"
     android:layout_height="match_parent"
     tools:context=".Views.Fragments.HomeFragment">
@@ -13,12 +14,13 @@
             android:id="@+id/shimmerFrameLayout"
             android:layout_width="wrap_content"
             android:layerType="software"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             shimmer:duration="1000">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+            <include layout="@layout/shimmer_post_view"/>
             <include layout="@layout/shimmer_post_view"/>
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -28,4 +30,13 @@
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/iv_ask"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="fitCenter"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_fab"
+        android:layout_gravity="bottom|end"/>
 </FrameLayout>

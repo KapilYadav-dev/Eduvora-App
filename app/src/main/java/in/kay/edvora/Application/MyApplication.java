@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.ContextWrapper;
 
 import com.pixplicity.easyprefs.library.Prefs;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +24,17 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        OfflineImageCache();
         EasyPrefInitz();
+    }
+
+    private void OfflineImageCache() {
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.downloader(new OkHttp3Downloader(this, Integer.MAX_VALUE));
+        Picasso built = builder.build();
+        built.setIndicatorsEnabled(true);
+        built.setLoggingEnabled(true);
+        Picasso.setSingletonInstance(built);
     }
 
     private void EasyPrefInitz() {

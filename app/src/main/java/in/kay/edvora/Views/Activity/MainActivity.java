@@ -1,29 +1,24 @@
 package in.kay.edvora.Views.Activity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import in.kay.edvora.R;
-import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Fragments.ClassFragment;
 import in.kay.edvora.Views.Fragments.HomeFragment;
 import in.kay.edvora.Views.Fragments.LibraryFragment;
 import in.kay.edvora.Views.Fragments.ProfileFragment;
-import nl.joery.animatedbottombar.AnimatedBottomBar;
+import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 public class MainActivity extends AppCompatActivity {
-    AnimatedBottomBar bottomBar;
+    BottomNavigation bottomBar;
     Fragment mFragment = null;
 
     @Override
@@ -32,9 +27,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomBar = findViewById(R.id.bottom_bar);
         SwitchFragement();
-        bottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
+        Typeface typeface = Typeface.createFromAsset(this.getAssets(),"gilroybold.ttf");
+        bottomBar.setDefaultTypeface(typeface);
+        bottomBar.setMenuItemSelectionListener(new BottomNavigation.OnMenuItemSelectionListener() {
             @Override
-            public void onTabSelected(int i, @Nullable AnimatedBottomBar.Tab tab, int i1, @NotNull AnimatedBottomBar.Tab tab1) {
+            public void onMenuItemSelect(int i, int i1, boolean b) {
                 switch (i1) {
                     case 0:
                         mFragment = new HomeFragment();
@@ -51,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
                     case 3:
                         mFragment = new ProfileFragment();
                         SwitchFragement();
-                        break; }}
+                        break; }
+            }
 
             @Override
-            public void onTabReselected(int i, @NotNull AnimatedBottomBar.Tab tab) {
+            public void onMenuItemReselect(int i, int i1, boolean b) {
+
             }
         });
     }
@@ -108,9 +107,4 @@ public class MainActivity extends AppCompatActivity {
         android.os.Process.killProcess(pid);
     }
 
-    public void Fab(View view) {
-        Toast.makeText(this, "Fab clicked", Toast.LENGTH_SHORT).show();
-        CustomToast customToast=new CustomToast();
-        customToast.ShowToast(this,"We are on Home base auth activity.");
-    }
 }

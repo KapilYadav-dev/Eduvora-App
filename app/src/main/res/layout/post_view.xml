@@ -108,6 +108,7 @@
             android:background="@drawable/ic_img_back">
 
             <ImageView
+                android:id="@+id/iv_postimg"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"

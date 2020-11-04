@@ -1,13 +1,13 @@
 package in.kay.edvora.Adapter;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -15,10 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,9 +33,10 @@ import in.kay.edvora.R;
 public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHolder> {
     List<HomeModel> list;
     Context context;
+
     public HomeFeedAdapter(List<HomeModel> list, Context context) {
         this.list = list;
-        this.context=context;
+        this.context = context;
     }
 
     @NonNull
@@ -44,34 +47,69 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PostedBy pb=list.get(position).getPostedBy();
-        Id id=pb.getId();
-        String username=id.getName();
-        String strDate=list.get(position).getCreatedAt();
-        Log.d("DATEIS", "GetDate: "+ strDate);
-        Date postDate=GetDate(strDate);
-        Integer difference=GetDateDiff(postDate);
-        if (difference==0)
-        {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        PostedBy pb = list.get(position).getPostedBy();
+        Id id = pb.getId();
+        String username = id.getName();
+        String strDate = list.get(position).getCreatedAt();
+        Date postDate = GetDate(strDate);
+        Integer difference = GetDateDiff(postDate);
+        if (difference == 0) {
             holder.tvDate.setText("Asked Today");
-        }
-        else if (difference==1)
-        {
+        } else if (difference == 1) {
             holder.tvDate.setText("Asked Yesterday");
+        } else if (difference > 356) {
+            holder.tvDate.setText("Asked a long time ago");
+        } else {
+            holder.tvDate.setText(difference + " days ago");
+        }
+        if (TextUtils.isEmpty(list.get(position).getSubject()) && TextUtils.isEmpty(list.get(position).getTopic()))
+        {
+            holder.tvTopic.setVisibility(View.GONE);
+        }
+        else if (TextUtils.isEmpty(list.get(position).getTopic()))
+        {
+            holder.tvTopic.setText(list.get(position).getSubject());
+        }
+        else if (TextUtils.isEmpty(list.get(position).getSubject()))
+        {
+            holder.tvTopic.setText(list.get(position).getTopic());
         }
         else {
-            holder.tvDate.setText(difference+" days ago");
+            holder.tvTopic.setText(list.get(position).getSubject() + " ● " + list.get(position).getTopic());
         }
-        holder.tvTopic.setText(list.get(position).getSubject()+" ● "+list.get(position).getTopic());
         holder.tvQuestion.setText(list.get(position).getQuestion());
         holder.tvName.setText(username);
+        if (!TextUtils.isEmpty(list.get(position).getImageUrl())) {
+            holder.cardView.setVisibility(View.VISIBLE);
+            Picasso.get()
+                    .load(list.get(position).getImageUrl())
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(holder.iv_postimg, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get()
+                                    .load(list.get(position).getImageUrl())
+                                    .placeholder(R.drawable.ic_image_holder)
+                                    .error(R.drawable.ic_image_holder)
+                                    .into(holder.iv_postimg);
+                        }
+                    });
+        } else {
+
+
+        }
     }
 
     private int GetDateDiff(Date date) {
         Date currentDate = new Date();
-        Date postDate=date;
-        int diff = DateTimeUtils.getDateDiff(currentDate,postDate, DateTimeUnits.DAYS);
+        Date postDate = date;
+        int diff = DateTimeUtils.getDateDiff(currentDate, postDate, DateTimeUnits.DAYS);
         return diff;
     }
 
@@ -94,9 +132,10 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView circleImageView;
-        TextView tvName, tvTopic, tvQuestion,tvDate;
+        TextView tvName, tvTopic, tvQuestion, tvDate;
         CardView cardView;
         LinearLayout llAnswer, llBookmark, llShare;
+        ImageView iv_postimg;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -105,6 +144,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
             tvTopic = itemView.findViewById(R.id.tvTopic);
             tvDate = itemView.findViewById(R.id.tvDays);
             tvQuestion = itemView.findViewById(R.id.tvQuestion);
+            iv_postimg = itemView.findViewById(R.id.iv_postimg);
             cardView = itemView.findViewById(R.id.cardView);
             llAnswer = itemView.findViewById(R.id.llAnswer);
             llBookmark = itemView.findViewById(R.id.llBookmark);

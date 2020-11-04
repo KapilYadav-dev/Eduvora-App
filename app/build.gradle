@@ -66,4 +66,10 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.4.4'
     //DateTimeLib
     implementation 'com.github.thunder413:DateTimeUtils:3.0'
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //BottomNavBar
+    implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:3.0.0'
+    //Transition
+    implementation 'com.github.mohammadatif:Animatoo:master'
 }

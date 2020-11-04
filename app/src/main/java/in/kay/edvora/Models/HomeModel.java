@@ -25,6 +25,20 @@ public class HomeModel {
     String topic;
     String createdAt;
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public HomeModel(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    String imageUrl;
+
 
     public String get_id() {
         return _id;

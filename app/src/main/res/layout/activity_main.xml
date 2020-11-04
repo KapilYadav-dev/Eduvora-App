@@ -10,7 +10,7 @@
     <Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:background="@color/white"
         android:contentInsetStart="0dp"
         android:elevation="10dp"
@@ -22,15 +22,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_toolbar_logo"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:fontFamily="@font/gilroybold"
+                android:textStyle="bold"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@+id/iv"
+                android:fontFamily="@font/gilroymedium"
                 android:text="@string/my_app_name"
-                android:textColor="@color/black"
-                android:textSize="30dp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
         </RelativeLayout>
     </Toolbar>
 
@@ -43,31 +53,14 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <nl.joery.animatedbottombar.AnimatedBottomBar
+    <it.sephiroth.android.library.bottomnavigation.BottomNavigation
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#FFF"
-        app:abb_indicatorAppearance="round"
-        app:abb_indicatorHeight="4dp"
-        app:abb_indicatorLocation="bottom"
-        app:abb_indicatorMargin="16dp"
-        app:abb_selectedIndex="0"
-        app:abb_selectedTabType="icon"
-        app:abb_tabs="@menu/tabs"
-        app:abb_textAppearance="@style/bottombar"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        app:bbn_badgeProvider="@string/bbn_badgeProvider"
+        app:bbn_entries="@menu/tabs"
+        app:layout_behavior="@string/bbn_tablet_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ImageView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:scaleType="fitCenter"
-        android:onClick="Fab"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_fab"
-        app:layout_constraintBottom_toBottomOf="@+id/container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

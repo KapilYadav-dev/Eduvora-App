@@ -10,11 +10,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Edvora"
-        tools:replace="android:label"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:label">
+        <activity android:name=".Views.Activity.AskQuestion"></activity>
         <activity android:name=".Views.Activity.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +26,14 @@
         <activity
             android:name=".Views.Activity.BaseAuth"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <activity android:name=".Views.Activity.Landing"/>
+        <activity android:name=".Views.Activity.Landing" />
         <activity
             android:name=".Views.Activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

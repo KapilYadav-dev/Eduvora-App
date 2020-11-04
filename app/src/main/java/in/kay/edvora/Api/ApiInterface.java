@@ -57,5 +57,12 @@ public interface ApiInterface {
     @POST("auth/getaccesstoken")
     Call<ResponseBody> getNewToken(@Header("Authorization") String header);
 
+    @FormUrlEncoded
+    @POST("feed/ask")
+    Call<ResponseBody> askQuestion(@Field("question") String question,
+                                   @Field("topic") String topic,
+                                   @Field("subject") String subject,
+                                   @Header("Authorization") String header);
+
 
 }
