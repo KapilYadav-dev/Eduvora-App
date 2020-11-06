@@ -2,6 +2,7 @@ package in.kay.edvora.Repository;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -23,7 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeRepository {
-    private MutableLiveData<List<HomeModel>> feedlist;
+    public MutableLiveData<List<HomeModel>> feedlist;
     Context context;
     public HomeRepository(MutableLiveData<List<HomeModel>> feedlist, Context context) {
         this.feedlist = feedlist;
@@ -40,11 +41,8 @@ public class HomeRepository {
         call.enqueue(new Callback<List<HomeModel>>() {
             @Override
             public void onResponse(Call<List<HomeModel>> call, Response<List<HomeModel>> response) {
-                Log.d("RESPONSECODE", "onResponse: "+response.code());
                if (response.isSuccessful())
-               {
                    feedlist.setValue(response.body());
-               }
                else if (response.code()==502){
                    //Token expired
                    MyApplication application=new MyApplication();

@@ -61,6 +61,7 @@ public interface ApiInterface {
     @POST("feed/ask")
     Call<ResponseBody> askQuestion(@Field("question") String question,
                                    @Field("topic") String topic,
+                                   @Field("imageUrl") String imageUrl,
                                    @Field("subject") String subject,
                                    @Header("Authorization") String header);
 

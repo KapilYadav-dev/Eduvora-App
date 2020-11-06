@@ -38,7 +38,12 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         this.list = list;
         this.context = context;
     }
-
+    public void setNewData(List<HomeModel> list, Context context)
+    {
+        this.context = context;
+        this.list=list;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -100,20 +105,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                                     .into(holder.iv_postimg);
                         }
                     });
-        } else {
-
-
-        }
+        } else  holder.cardView.setVisibility(View.GONE);
     }
 
-    private int GetDateDiff(Date date) {
+    public int GetDateDiff(Date date) {
         Date currentDate = new Date();
         Date postDate = date;
         int diff = DateTimeUtils.getDateDiff(currentDate, postDate, DateTimeUnits.DAYS);
         return diff;
     }
 
-    private Date GetDate(String string) {
+    public Date GetDate(String string) {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {

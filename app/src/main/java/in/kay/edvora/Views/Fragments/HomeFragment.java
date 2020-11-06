@@ -2,12 +2,15 @@ package in.kay.edvora.Views.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +28,8 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.yalantis.phoenix.PullToRefreshView;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import in.kay.edvora.Adapter.HomeFeedAdapter;
@@ -41,6 +46,7 @@ public class HomeFragment extends Fragment {
     HomeFeedAdapter adapter;
     ShimmerFrameLayout shimmerFrameLayout;
     ImageView fab;
+    List<HomeModel> initlist;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,16 +59,10 @@ public class HomeFragment extends Fragment {
         super.onAttach(context);
         this.context = context;
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         fab=view.findViewById(R.id.iv_ask);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +81,8 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new HomeFeedAdapter(initlist, context);
+        recyclerView.setAdapter(adapter);
         shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
@@ -106,14 +108,16 @@ public class HomeFragment extends Fragment {
     }
 
     private void LoadData() {
-        homeViewModel.getFeed(context).observe((LifecycleOwner) context, new Observer<List<HomeModel>>() {
+        homeViewModel.getFeed(context).observe(getViewLifecycleOwner(), new Observer<List<HomeModel>>() {
             @Override
             public void onChanged(List<HomeModel> homeModels) {
-                adapter = new HomeFeedAdapter(homeModels, context);
                 shimmerFrameLayout.setVisibility(View.GONE);
+                if (homeModels !=null)
+                {
+                    initlist=homeModels;
+                    adapter.setNewData(homeModels,context);
+                }
                 recyclerView.setVisibility(View.VISIBLE);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
             }
         });
     }

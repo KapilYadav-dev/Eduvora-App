@@ -1,9 +1,9 @@
 package in.kay.edvora.Views.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,8 +15,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.pixplicity.easyprefs.library.Prefs;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.IOException;
 
@@ -32,10 +44,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AskQuestion extends AppCompatActivity {
-    EditText etTopic,etQuestion,etSubject;
-    TextView tvTopic,tvQuestion,tvSubject;
-    ImageView ivAttach,close;
+    EditText etTopic, etQuestion, etSubject;
+    TextView tvTopic, tvQuestion, tvSubject;
+    ImageView ivAttach, close;
     Button ask;
+    Uri imgUri;
+    private StorageReference mStorageRef;
+    String imgUrl = null;
+    Boolean isUploaded=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,19 +60,28 @@ public class AskQuestion extends AppCompatActivity {
         Initz();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        close.setEnabled(true);
+    }
+
     private void Initz() {
-        etTopic=findViewById(R.id.et_topic);
-        etQuestion=findViewById(R.id.et_question);
-        etSubject=findViewById(R.id.et_subject);
-        tvTopic=findViewById(R.id.tvTopic);
-        close=findViewById(R.id.close);
-        ask=findViewById(R.id.button);
-        tvQuestion=findViewById(R.id.tvQuestion);
-        tvSubject=findViewById(R.id.tvSubject);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        etTopic = findViewById(R.id.et_topic);
+        etQuestion = findViewById(R.id.et_question);
+        etSubject = findViewById(R.id.et_subject);
+        tvTopic = findViewById(R.id.tvTopic);
+        close = findViewById(R.id.close);
+        ivAttach = findViewById(R.id.iv);
+        ask = findViewById(R.id.button);
+        tvQuestion = findViewById(R.id.tvQuestion);
+        tvSubject = findViewById(R.id.tvSubject);
         TextWatcherLogic();
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                close.setEnabled(false);
                 Toast.makeText(AskQuestion.this, "Clicked", Toast.LENGTH_SHORT).show();
                 GoBack();
             }
@@ -66,68 +92,79 @@ public class AskQuestion extends AppCompatActivity {
                 AddQuestion();
             }
         });
+        ivAttach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
+                        .setOutputCompressQuality(50)
+                        .start(AskQuestion.this);
+            }
+        });
     }
 
     private void AddQuestion() {
-        String question=etQuestion.getText().toString();
-        String topic=etTopic.getText().toString();
-        String subject=etSubject.getText().toString();
-        if (TextUtils.isEmpty(question))
-        {
-            etQuestion.setFocusable(true);
-            etQuestion.setError("Please enter a question to continue.");
-        }else
-        {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(ApiInterface.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-            Call<ResponseBody> call = apiInterface.askQuestion(question,topic,subject,"Bearer "+ Prefs.getString("accessToken",""));
-            final ProgressDialog pd = new ProgressDialog( this);
-            pd.setMax(100);
-            pd.setMessage("Adding question...");
-            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            pd.show();
-            pd.setCancelable(false);
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful())
-                    {
-                        pd.dismiss();
-                        CustomToast customToast=new CustomToast();
-                        customToast.ShowToast(AskQuestion.this,"Your question has been added successfully.");
-                        GoBack();
-                    }
-                    else if (response.code()==502)
-                    {
-                        MyApplication myApplication=new MyApplication();
-                        myApplication.RefreshToken(Prefs.getString("refreshToken",""));
-                        AddQuestion();
-                    }
-                    else {
-                        try {
+        if (imgUri != null) {
+            imgUrl = UploadImageToDatabase(imgUri);
+        }
+        else {
+            imgUrl=null;
+            String question = etQuestion.getText().toString();
+            String topic = etTopic.getText().toString();
+            String subject = etSubject.getText().toString();
+            if (TextUtils.isEmpty(question)) {
+                etQuestion.setError("Please enter a question to continue.");
+                etQuestion.requestFocus();
+            } else {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(ApiInterface.BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+                Call<ResponseBody> call = apiInterface.askQuestion(question, topic,imgUrl, subject, "Bearer " + Prefs.getString("accessToken", ""));
+                final ProgressDialog pd = new ProgressDialog(this);
+                pd.setMax(100);
+                pd.setMessage("Adding question...");
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.show();
+                pd.setCancelable(false);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
                             pd.dismiss();
-                            String error=response.errorBody().string();
-                            CustomToast customToast=new CustomToast();
-                            customToast.ShowToast(AskQuestion.this,"Response error " +error);
-                        } catch (IOException e) {
-                            pd.dismiss();
-                            e.printStackTrace();
+                            CustomToast customToast = new CustomToast();
+                            customToast.ShowToast(AskQuestion.this, "Your question has been added successfully.");
+                            GoBack();
+                        } else if (response.code() == 502) {
+                            MyApplication myApplication = new MyApplication();
+                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""));
+                            AddQuestion();
+                        } else {
+                            try {
+                                pd.dismiss();
+                                String error = response.errorBody().string();
+                                CustomToast customToast = new CustomToast();
+                                customToast.ShowToast(AskQuestion.this, "Response error " + error);
+                            } catch (IOException e) {
+                                pd.dismiss();
+                                e.printStackTrace();
+                            }
+
                         }
-
                     }
-                }
 
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    pd.dismiss();
-                    CustomToast customToast=new CustomToast();
-                    customToast.ShowToast(AskQuestion.this,"Retrpfot error " +t.getLocalizedMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        pd.dismiss();
+                        CustomToast customToast = new CustomToast();
+                        customToast.ShowToast(AskQuestion.this, "Retrpfot error " + t.getLocalizedMessage());
+                    }
+                });
+            }
+
         }
 
 
@@ -142,8 +179,8 @@ public class AskQuestion extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                int length=etSubject.getText().toString().length();
-                tvSubject.setText(length+"/50");
+                int length = etSubject.getText().toString().length();
+                tvSubject.setText(length + "/50");
             }
 
             @Override
@@ -159,8 +196,8 @@ public class AskQuestion extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                int length=etQuestion.getText().toString().length();
-                tvQuestion.setText(length+"/200");
+                int length = etQuestion.getText().toString().length();
+                tvQuestion.setText(length + "/200");
             }
 
             @Override
@@ -176,8 +213,8 @@ public class AskQuestion extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                int length=etTopic.getText().toString().length();
-                tvTopic.setText(length+"/50");
+                int length = etTopic.getText().toString().length();
+                tvTopic.setText(length + "/50");
             }
 
             @Override
@@ -193,8 +230,112 @@ public class AskQuestion extends AppCompatActivity {
     }
 
     private void GoBack() {
-        startActivity(new Intent(this,MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         Animatoo.animateSlideDown(this);
         this.finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Picasso.get().load(resultUri).into(ivAttach);
+                imgUri = resultUri;
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(this, "Error occurred while choosing image " + error);
+            }
+        }
+    }
+
+    private String UploadImageToDatabase(Uri uri) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMax(100);
+        pd.setMessage("Uploading image...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        final StorageReference ImageName = mStorageRef.child("PostImages").child("img_" + uri.getLastPathSegment());
+        ImageName.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                pd.dismiss();
+                ImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        imgUrl = String.valueOf(uri);
+                        UploadDatatoServer(imgUrl);
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                pd.dismiss();
+            }
+        });
+        return imgUrl;
+    }
+
+    private void UploadDatatoServer(String string) {
+        String question = etQuestion.getText().toString();
+        String topic = etTopic.getText().toString();
+        String subject = etSubject.getText().toString();
+        if (TextUtils.isEmpty(question)) {
+            etQuestion.setError("Please enter a question to continue.");
+            etQuestion.requestFocus();
+        } else {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(ApiInterface.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+            Call<ResponseBody> call = apiInterface.askQuestion(question, topic, string, subject, "Bearer " + Prefs.getString("accessToken", ""));
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMax(100);
+            pd.setMessage("Adding question...");
+            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pd.show();
+            pd.setCancelable(false);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        pd.dismiss();
+                        CustomToast customToast = new CustomToast();
+                        customToast.ShowToast(AskQuestion.this, "Your question has been added successfully.");
+                        GoBack();
+                    } else if (response.code() == 502) {
+                        MyApplication myApplication = new MyApplication();
+                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""));
+                        AddQuestion();
+                    } else {
+                        try {
+                            pd.dismiss();
+                            String error = response.errorBody().string();
+                            CustomToast customToast = new CustomToast();
+                            customToast.ShowToast(AskQuestion.this, "Response error " + error);
+                        } catch (IOException e) {
+                            pd.dismiss();
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    pd.dismiss();
+                    CustomToast customToast = new CustomToast();
+                    customToast.ShowToast(AskQuestion.this, "Retrpfot error " + t.getLocalizedMessage());
+                }
+            });
+        }
+
     }
 }
