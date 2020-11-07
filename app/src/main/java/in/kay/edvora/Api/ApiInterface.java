@@ -58,7 +58,7 @@ public interface ApiInterface {
     Call<List<HomeModel>> getParticularFeed(@Field("id") String id,
                                             @Header("Authorization") String header);
 
-    @POST("auth/getaccesstoken")
+    @GET("auth/getaccesstoken")
     Call<ResponseBody> getNewToken(@Header("Authorization") String header);
 
     @FormUrlEncoded
@@ -68,6 +68,11 @@ public interface ApiInterface {
                                    @Field("imageUrl") String imageUrl,
                                    @Field("subject") String subject,
                                    @Header("Authorization") String header);
+    @FormUrlEncoded
+    @POST("feed/answer")
+    Call<ResponseBody> sendAnswer(@Field("questionId") String questionId,
+                                  @Field("answer") String answer,
+                                  @Header("Authorization") String header);
 
 
 }

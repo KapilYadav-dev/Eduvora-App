@@ -117,7 +117,6 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                         }
                     });
         } else  holder.cardView.setVisibility(View.GONE);
-        Toast.makeText(context, "Image Proifle is "+userimage+userID, Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(userimage))
         {
             Picasso.get()

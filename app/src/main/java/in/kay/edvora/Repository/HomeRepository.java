@@ -47,7 +47,7 @@ public class HomeRepository {
                else if (response.code()==502){
                    //Token expired
                    MyApplication application=new MyApplication();
-                   application.RefreshToken(Prefs.getString("refreshToken",""));
+                   application.RefreshToken(Prefs.getString("refreshToken",""),context);
                    LoadFeed();
                }
                else {

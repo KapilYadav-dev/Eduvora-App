@@ -3,6 +3,7 @@ package in.kay.edvora.Views.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,12 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 
 import in.kay.edvora.R;
+import in.kay.edvora.Repository.AnswerRepository;
+import in.kay.edvora.Repository.HomeRepository;
 
 public class AnswerActivity extends AppCompatActivity {
     String userId, userImage, question, postImage, name, days, postID, topic;
     TextView tvName, tvDays, tvQuestion, tvTopic;
-    ImageView iv_profileImage, iv_postImage,ivBack;
-
+    ImageView iv_profileImage, iv_postImage,ivBack,ivSend;
+    EditText etAns;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,22 @@ public class AnswerActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(userImage) && postImage != "") {
             Picasso.get().load(userImage).error(R.drawable.ic_image_holder).placeholder(R.drawable.ic_image_holder).into(iv_profileImage);
         }
+        ivSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(etAns.getText().toString()))
+                {
+                    etAns.setError("Please enter something");
+                    etAns.requestFocus();
+                    return;
+                }
+                else {
+                    AnswerRepository answerRepository=new AnswerRepository(AnswerActivity.this);
+                    answerRepository.SendAnswer(postID,etAns.getText().toString());
+                    etAns.setText("");
+                }
+            }
+        });
     }
 
     private void Initz() {
@@ -61,7 +80,9 @@ public class AnswerActivity extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         ivBack=findViewById(R.id.back);
         tvQuestion = findViewById(R.id.tvQuestion);
+        ivSend = findViewById(R.id.iv_send);
         tvTopic = findViewById(R.id.tvTopic);
+        etAns = findViewById(R.id.et_answer);
         iv_profileImage = findViewById(R.id.iv_profile);
         iv_postImage = findViewById(R.id.iv_postimg);
     }

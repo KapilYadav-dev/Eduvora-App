@@ -1,7 +1,10 @@
 package in.kay.edvora.Application;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.ContextWrapper;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -13,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Utils.CustomToast;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +50,7 @@ public class MyApplication extends Application {
                 .build();
     }
 
-    public void RefreshToken(String token) {
+    public void RefreshToken(String token, final Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -61,8 +65,18 @@ public class MyApplication extends Application {
                         String req = response.body().string();
                         JSONObject jsonObject = new JSONObject(req);
                         String accessToken = jsonObject.getString("accessToken");
+                  //      Toast.makeText(context, "New access token is "+accessToken, Toast.LENGTH_SHORT).show();
                         Prefs.putString("accessToken", accessToken);
+                        Log.d("ACCESSTOKENLOG", "NEWTOKEN: "+Prefs.getString("accessToken",""));
                     } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    CustomToast customToast=new CustomToast();
+                    try {
+                        customToast.ShowToast(context,"Error occured "+response.errorBody().string());
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -70,7 +84,8 @@ public class MyApplication extends Application {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Failure occured "+t.getLocalizedMessage());
             }
         });
 

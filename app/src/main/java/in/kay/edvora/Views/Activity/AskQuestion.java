@@ -137,7 +137,7 @@ public class AskQuestion extends AppCompatActivity {
                             GoBack();
                         } else if (response.code() == 502) {
                             MyApplication myApplication = new MyApplication();
-                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""));
+                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""),AskQuestion.this);
                             AddQuestion();
                         } else {
                             try {
@@ -309,7 +309,7 @@ public class AskQuestion extends AppCompatActivity {
                         GoBack();
                     } else if (response.code() == 502) {
                         MyApplication myApplication = new MyApplication();
-                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""));
+                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""),AskQuestion.this);
                         AddQuestion();
                     } else {
                         try {
