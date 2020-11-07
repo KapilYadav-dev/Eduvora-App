@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void LoadData() {
-        homeViewModel.getFeed(context).observe(getViewLifecycleOwner(), new Observer<List<HomeModel>>() {
+            homeViewModel.getFeed(context).observe(getViewLifecycleOwner(), new Observer<List<HomeModel>>() {
             @Override
             public void onChanged(List<HomeModel> homeModels) {
                 shimmerFrameLayout.setVisibility(View.GONE);

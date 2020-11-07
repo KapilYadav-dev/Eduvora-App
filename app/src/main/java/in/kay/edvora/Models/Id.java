@@ -9,29 +9,32 @@ public class Id {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
+
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public String getCollege() {
-        return college;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCollege(String college) {
-        this.college = college;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public Id(String name, String id, String college) {
+    public Id(String name, String college, String _id, String imageUrl) {
         this.name = name;
-        this.id = id;
         this.college = college;
+        this._id=_id;
+        this.imageUrl=imageUrl;
     }
 
     String name;
-     String  id;;
      String college;
+     String _id;
+     String imageUrl;
 }

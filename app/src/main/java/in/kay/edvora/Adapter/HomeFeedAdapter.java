@@ -1,6 +1,8 @@
 package in.kay.edvora.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.squareup.picasso.Callback;
@@ -29,6 +36,8 @@ import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.Models.Id;
 import in.kay.edvora.Models.PostedBy;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
+import in.kay.edvora.Views.Activity.AnswerActivity;
 
 public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHolder> {
     List<HomeModel> list;
@@ -56,9 +65,11 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         PostedBy pb = list.get(position).getPostedBy();
         Id id = pb.getId();
         String username = id.getName();
+        final String userID = id.get_id();
+        final String userimage = id.getImageUrl();
         String strDate = list.get(position).getCreatedAt();
         Date postDate = GetDate(strDate);
-        Integer difference = GetDateDiff(postDate);
+        final Integer difference = GetDateDiff(postDate);
         if (difference == 0) {
             holder.tvDate.setText("Asked Today");
         } else if (difference == 1) {
@@ -106,6 +117,70 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                         }
                     });
         } else  holder.cardView.setVisibility(View.GONE);
+        Toast.makeText(context, "Image Proifle is "+userimage+userID, Toast.LENGTH_SHORT).show();
+        if (!TextUtils.isEmpty(userimage))
+        {
+            Picasso.get()
+                    .load(userimage)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(holder.circleImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get()
+                                    .load(userimage)
+                                    .placeholder(R.drawable.ic_image_holder)
+                                    .error(R.drawable.ic_image_holder)
+                                    .into(holder.circleImageView);
+                        }
+                    });
+        }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.cl, ViewCompat.getTransitionName(holder.cl));
+                Intent intent=new Intent(context,AnswerActivity.class);
+                intent.putExtra("question",list.get(position).getQuestion());
+                intent.putExtra("days",Integer.toString(difference));
+                intent.putExtra("postID",list.get(position).get_id());
+                intent.putExtra("name",list.get(position).getPostedBy().getId().getName());
+                intent.putExtra("topic",list.get(position).getSubject() + " ● " + list.get(position).getTopic());
+                if (list.get(position).getImageUrl()!=null)
+                {
+                    intent.putExtra("postimageUrl",list.get(position).getImageUrl());
+                }
+                else {
+                    intent.putExtra("postimageUrl", "");
+                }
+                if (!TextUtils.isEmpty(userimage))
+                {
+                    intent.putExtra("profileimageUrl",userimage);
+                }
+                else {
+                    intent.putExtra("profileimageUrl", "");
+                }
+                intent.putExtra("userId",userID);
+                context.startActivity(intent,options.toBundle());
+            }
+        });
+        holder.llBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Answer is clicked");
+            }
+        });
+        holder.llShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Share is clicked");
+            }
+        });
     }
 
     public int GetDateDiff(Date date) {
@@ -116,7 +191,6 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
     }
 
     public Date GetDate(String string) {
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {
             Date date = format.parse(string);
@@ -138,11 +212,13 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         CardView cardView;
         LinearLayout llAnswer, llBookmark, llShare;
         ImageView iv_postimg;
+        ConstraintLayout cl;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            circleImageView = itemView.findViewById(R.id.circleImageView);
+            circleImageView = itemView.findViewById(R.id.iv_profile);
             tvName = itemView.findViewById(R.id.tvName);
+            cl=itemView.findViewById(R.id.cl);
             tvTopic = itemView.findViewById(R.id.tvTopic);
             tvDate = itemView.findViewById(R.id.tvDays);
             tvQuestion = itemView.findViewById(R.id.tvQuestion);

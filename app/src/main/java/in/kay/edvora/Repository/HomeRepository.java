@@ -10,6 +10,7 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 
 import in.kay.edvora.Api.ApiInterface;
@@ -50,7 +51,12 @@ public class HomeRepository {
                    LoadFeed();
                }
                else {
-
+                   try {
+                       CustomToast customToast=new CustomToast();
+                       customToast.ShowToast(context,response.errorBody().string());
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
                }
             }
 

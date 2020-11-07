@@ -16,7 +16,6 @@ public class HomeViewModel extends ViewModel {
     public MutableLiveData<List<HomeModel>> homefeed;
 
     public LiveData<List<HomeModel>> getFeed(Context context) {
-        Toast.makeText(context, "datachnaged", Toast.LENGTH_SHORT).show();
         if (homefeed == null) {
             homefeed = new MutableLiveData<List<HomeModel>>();
             HomeRepository hr = new HomeRepository(homefeed,context);

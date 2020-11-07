@@ -6,65 +6,74 @@
     android:layout_height="wrap_content"
     android:background="@color/white">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circleImageView"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ic_image_holder"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:transitionName="Image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/gilroybold"
-        android:text="KRDM"
-        android:textColor="@color/black"
-        android:textSize="14dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_profile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_image_holder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvDays"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:fontFamily="@font/gilroymedium"
-        android:text="2 days ago"
-        android:textSize="11dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView"
-        app:layout_constraintTop_toBottomOf="@+id/tvName"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_toRightOf="@id/iv_profile"
+            android:fontFamily="@font/gilroybold"
+            android:text="KRDM"
+            android:textColor="@color/black"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvName"
+            android:layout_marginStart="16dp"
+            android:layout_toRightOf="@id/iv_profile"
+            android:fontFamily="@font/gilroymedium"
+            android:text="2 days ago"
+            android:textSize="11dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/iv_profile"
+            app:layout_constraintTop_toBottomOf="@+id/tvName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tvTopic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:textStyle="bold"
         android:fontFamily="@font/segoeui"
         android:text="Mathematics • Partial Derivative"
         android:textColor="#1DA1F2"
         android:textSize="14dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/circleImageView"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -120,19 +129,8 @@
                 android:layout_alignParentBottom="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_white_grad" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/gilroymedium"
-                android:text="View full question"
-                android:textSize="12dp" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -156,13 +154,14 @@
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
+            android:id="@+id/llAnswer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/llAnswer"
             android:layout_alignParentStart="true"
+            android:padding="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
 
             <ImageView
                 android:layout_width="15dp"
@@ -180,12 +179,13 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/llBookmark"
+            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/llBookmark"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
 
             <ImageView
                 android:layout_width="15dp"
@@ -203,13 +203,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/llShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/llShare"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="16dp">
+            android:padding="10dp"
+            android:layout_marginBottom="5dp">
 
             <ImageView
                 android:layout_width="15dp"

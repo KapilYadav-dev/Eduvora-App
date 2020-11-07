@@ -22,7 +22,6 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pixplicity.easyprefs.library.Prefs;
@@ -51,7 +50,7 @@ public class AskQuestion extends AppCompatActivity {
     Uri imgUri;
     private StorageReference mStorageRef;
     String imgUrl = null;
-    Boolean isUploaded=false;
+    Boolean isUploaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,24 +104,23 @@ public class AskQuestion extends AppCompatActivity {
     }
 
     private void AddQuestion() {
-        if (imgUri != null) {
-            imgUrl = UploadImageToDatabase(imgUri);
-        }
-        else {
-            imgUrl=null;
-            String question = etQuestion.getText().toString();
-            String topic = etTopic.getText().toString();
-            String subject = etSubject.getText().toString();
-            if (TextUtils.isEmpty(question)) {
-                etQuestion.setError("Please enter a question to continue.");
-                etQuestion.requestFocus();
+        String question = etQuestion.getText().toString();
+        String topic = etTopic.getText().toString();
+        String subject = etSubject.getText().toString();
+        if (TextUtils.isEmpty(question)) {
+            etQuestion.setError("Please enter a question to continue.");
+            etQuestion.requestFocus();
+        } else {
+            if (imgUri != null) {
+                imgUrl = UploadImageToDatabase(imgUri);
             } else {
+                imgUrl = null;
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(ApiInterface.BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-                Call<ResponseBody> call = apiInterface.askQuestion(question, topic,imgUrl, subject, "Bearer " + Prefs.getString("accessToken", ""));
+                Call<ResponseBody> call = apiInterface.askQuestion(question, topic, imgUrl, subject, "Bearer " + Prefs.getString("accessToken", ""));
                 final ProgressDialog pd = new ProgressDialog(this);
                 pd.setMax(100);
                 pd.setMessage("Adding question...");

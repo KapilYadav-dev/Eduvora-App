@@ -54,6 +54,10 @@ public interface ApiInterface {
     @GET("feed/view")
     Call<List<HomeModel>> getFeed(@Header("Authorization") String header);
 
+    @GET("feed/view/{id}")
+    Call<List<HomeModel>> getParticularFeed(@Field("id") String id,
+                                            @Header("Authorization") String header);
+
     @POST("auth/getaccesstoken")
     Call<ResponseBody> getNewToken(@Header("Authorization") String header);
 
