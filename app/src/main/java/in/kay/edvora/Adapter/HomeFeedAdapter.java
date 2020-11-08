@@ -3,7 +3,9 @@ package in.kay.edvora.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import fr.tvbarthel.intentshare.IntentShare;
 import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.Models.Id;
 import in.kay.edvora.Models.PostedBy;
@@ -170,14 +173,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 CustomToast customToast=new CustomToast();
-                customToast.ShowToast(context,"Answer is clicked");
+                customToast.ShowToast(context,"Bookmark is clicked");
             }
         });
         holder.llShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(context,"Share is clicked");
+                Intent txtIntent = new Intent(android.content.Intent.ACTION_SEND);
+                txtIntent .setType("text/plain");
+                txtIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, "Edvora");
+                txtIntent .putExtra(android.content.Intent.EXTRA_TEXT, list.get(position).getQuestion().substring(0,Math.min(list.get(position).getQuestion().length(),160))+"..."+"\n"+"-by  "+list.get(position).getPostedBy().getId().getName()+"\n"+"https://www.edvora.in/"+list.get(position).get_id());
+                context.startActivity(Intent.createChooser(txtIntent ,"Share"));
             }
         });
     }

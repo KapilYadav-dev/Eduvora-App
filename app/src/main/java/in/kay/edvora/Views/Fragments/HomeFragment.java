@@ -79,7 +79,6 @@ public class HomeFragment extends Fragment {
             fab.setVisibility(View.VISIBLE);
         }
         recyclerView = view.findViewById(R.id.rv);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new HomeFeedAdapter(initlist, context);
         recyclerView.setAdapter(adapter);

@@ -1,32 +1,128 @@
 package in.kay.edvora.Views.Activity;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.thunder413.datetimeutils.DateTimeUnits;
+import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.R;
 import in.kay.edvora.Repository.AnswerRepository;
 import in.kay.edvora.Repository.HomeRepository;
+import in.kay.edvora.Utils.CustomToast;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AnswerActivity extends AppCompatActivity {
     String userId, userImage, question, postImage, name, days, postID, topic;
     TextView tvName, tvDays, tvQuestion, tvTopic;
-    ImageView iv_profileImage, iv_postImage,ivBack,ivSend;
-    EditText etAns;
+    ImageView iv_profileImage, iv_postImage,ivBack,ivChat;
+    RelativeLayout rlAnswer;
+    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_answer);
         GetValues();
         Initz();
+        Uri uri=getIntent().getData();
+        if (uri!=null)
+        {
+            if (Prefs.getBoolean("isLoggedIn",false))
+            {
+                List<String> params=uri.getPathSegments();
+                String postId=params.get(params.size()-1);
+                LoadDataFromServer(postId);
+            }
+            else {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(this,"Please login first..");
+                startActivity(new Intent(this,Landing.class));
+            }
+
+        }else
         LoadData();
+    }
+
+    private void LoadDataFromServer(String string) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<HomeModel> call = apiInterface.getParticularFeed(string,"Bearer " +Prefs.getString("accessToken",""));
+        call.enqueue(new Callback<HomeModel>() {
+            @Override
+            public void onResponse(Call<HomeModel> call, Response<HomeModel> response) {
+                if (response.isSuccessful())
+                {
+                    HomeModel list=response.body();
+                    question = list.getQuestion();
+                    userId = list.getPostedBy().getId().get_id();
+                    userImage = list.getPostedBy().getId().getImageUrl();
+                    postImage =list.getImageUrl();
+                    name = list.getPostedBy().getId().getName();
+                    days = list.getCreatedAt();
+                    Date postDate=GetDate(days);
+                    int difference=GetDateDiff(postDate);
+                    days=Integer.toString(difference);
+                    topic =list.getSubject()+" ● "+list.getTopic();
+                    ivChat.setVisibility(View.GONE);
+                    rlAnswer.setVisibility(View.GONE);
+                    LoadData();
+                }
+                else {
+                    try {
+                        Toast.makeText(AnswerActivity.this, "Error is "+response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HomeModel> call, Throwable t) {
+                Toast.makeText(AnswerActivity.this, "Failure  is "+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public int GetDateDiff(Date date) {
+        Date currentDate = new Date();
+        Date postDate = date;
+        int diff = DateTimeUtils.getDateDiff(currentDate, postDate, DateTimeUnits.DAYS);
+        return diff;
     }
 
     private void LoadData() {
@@ -46,7 +142,14 @@ public class AnswerActivity extends AppCompatActivity {
         } else {
             tvDays.setText(difference + " days ago");
         }
-        tvTopic.setText(topic);
+        if (!topic.equalsIgnoreCase(" ● "))
+        {
+            tvTopic.setText(topic);
+        }
+        else {
+            tvTopic.setVisibility(View.GONE);
+        }
+
         tvQuestion.setText(question);
         tvName.setText(name);
         if (!TextUtils.isEmpty(postImage)) {
@@ -57,33 +160,70 @@ public class AnswerActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(userImage) && postImage != "") {
             Picasso.get().load(userImage).error(R.drawable.ic_image_holder).placeholder(R.drawable.ic_image_holder).into(iv_profileImage);
         }
-        ivSend.setOnClickListener(new View.OnClickListener() {
+        rlAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(etAns.getText().toString()))
+                ShowDiag();
+            }
+        });
+        LoadAnswers();
+    }
+
+    private void LoadAnswers() {
+
+    }
+
+    private void ShowDiag() {
+        ImageView close;
+        TextView post,dvQuestion;
+        final EditText answer;
+        dialog.setContentView(R.layout.answer_diag);
+        dvQuestion=dialog.findViewById(R.id.dv_question);
+        close=dialog.findViewById(R.id.close);
+        post=dialog.findViewById(R.id.tv_submit);
+        answer=dialog.findViewById(R.id.et_answer);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        dvQuestion.setText(question);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(answer.getText().toString()))
                 {
-                    etAns.setError("Please enter something");
-                    etAns.requestFocus();
+                    answer.setHint("Enter some answer to post");
+                    answer.requestFocus();
                     return;
                 }
                 else {
+                    Toast.makeText(AnswerActivity.this, "ASnwris "+answer.getText().toString(), Toast.LENGTH_SHORT).show();
                     AnswerRepository answerRepository=new AnswerRepository(AnswerActivity.this);
-                    answerRepository.SendAnswer(postID,etAns.getText().toString());
-                    etAns.setText("");
+                    answerRepository.SendAnswer(postID,answer.getText().toString());
+                    dialog.dismiss();
                 }
             }
         });
     }
 
     private void Initz() {
+        dialog=new Dialog(this);
         tvDays = findViewById(R.id.tvDays);
         tvName = findViewById(R.id.tvName);
         ivBack=findViewById(R.id.back);
+        rlAnswer=findViewById(R.id.rl_one);
         tvQuestion = findViewById(R.id.tvQuestion);
-        ivSend = findViewById(R.id.iv_send);
         tvTopic = findViewById(R.id.tvTopic);
-        etAns = findViewById(R.id.et_answer);
         iv_profileImage = findViewById(R.id.iv_profile);
+        ivChat = findViewById(R.id.iv_chat);
         iv_postImage = findViewById(R.id.iv_postimg);
     }
 
@@ -96,6 +236,16 @@ public class AnswerActivity extends AppCompatActivity {
         days = getIntent().getStringExtra("days");
         topic = getIntent().getStringExtra("topic");
         postID = getIntent().getStringExtra("postID");
+    }
+    public Date GetDate(String string) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        try {
+            Date date = format.parse(string);
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

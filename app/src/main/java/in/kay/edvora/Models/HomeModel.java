@@ -2,10 +2,26 @@ package in.kay.edvora.Models;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
-
 public class HomeModel {
     PostedBy postedBy;
+    String _id;
+    String question;
+    String subject;
+    String topic;
+    String createdAt;
+    String imageUrl;
+    List<Answers> answers;
+
+    public HomeModel(PostedBy postedBy, String _id, String question, String subject, String topic, String createdAt, String imageUrl, List<Answers> answers) {
+        this.postedBy = postedBy;
+        this._id = _id;
+        this.question = question;
+        this.subject = subject;
+        this.topic = topic;
+        this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
+        this.answers = answers;
+    }
 
     public PostedBy getPostedBy() {
         return postedBy;
@@ -14,31 +30,6 @@ public class HomeModel {
     public void setPostedBy(PostedBy postedBy) {
         this.postedBy = postedBy;
     }
-
-    public HomeModel(PostedBy postedBy) {
-        this.postedBy = postedBy;
-    }
-
-    String _id;
-    String question;
-    String subject;
-    String topic;
-    String createdAt;
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public HomeModel(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    String imageUrl;
-
 
     public String get_id() {
         return _id;
@@ -80,11 +71,19 @@ public class HomeModel {
         this.createdAt = createdAt;
     }
 
-    public HomeModel(ResponseBody postedBy, String _id, String question, String subject, String topic, String createdAt) {
-        this._id = _id;
-        this.question = question;
-        this.subject = subject;
-        this.topic = topic;
-        this.createdAt = createdAt;
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public List<Answers> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answers> answers) {
+        this.answers = answers;
     }
 }

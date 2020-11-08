@@ -195,7 +195,7 @@ public class AskQuestion extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 int length = etQuestion.getText().toString().length();
-                tvQuestion.setText(length + "/200");
+                tvQuestion.setText(length + "/5000");
             }
 
             @Override

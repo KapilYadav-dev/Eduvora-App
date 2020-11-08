@@ -10,6 +10,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ApiInterface {
     String BASE_URL = "http://192.168.1.7:8080/";
@@ -55,8 +56,7 @@ public interface ApiInterface {
     Call<List<HomeModel>> getFeed(@Header("Authorization") String header);
 
     @GET("feed/view/{id}")
-    Call<List<HomeModel>> getParticularFeed(@Field("id") String id,
-                                            @Header("Authorization") String header);
+    Call<HomeModel> getParticularFeed(@Path("id") String id, @Header("Authorization") String header);
 
     @GET("auth/getaccesstoken")
     Call<ResponseBody> getNewToken(@Header("Authorization") String header);
