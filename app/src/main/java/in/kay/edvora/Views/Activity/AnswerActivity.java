@@ -1,6 +1,7 @@
 package in.kay.edvora.Views.Activity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import in.kay.edvora.Adapter.AnswersAdapter;
 import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.Models.Answers;
 import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.R;
@@ -74,7 +76,13 @@ public class AnswerActivity extends AppCompatActivity {
         LoadData();
     }
 
-    private void LoadDataFromServer(String string, final int i) {
+    private void LoadDataFromServer(final String string, final int i) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMax(100);
+        pd.setMessage("Loading...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -109,8 +117,16 @@ public class AnswerActivity extends AppCompatActivity {
                         List<Answers> answers=response.body().getAnswers();
                         LoadAnswers(answers);
                     }
+                    pd.dismiss();
+                }
+                else if (response.code()==502)
+                {
+                    MyApplication application=new MyApplication();
+                    application.RefreshToken(Prefs.getString("refreshToken",""),AnswerActivity.this);
+                    LoadDataFromServer(string, i);
                 }
                 else {
+                    pd.dismiss();
                     try {
                         Toast.makeText(AnswerActivity.this, "Error is "+response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -225,10 +241,13 @@ public class AnswerActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    Toast.makeText(AnswerActivity.this, "ASnwris "+answer.getText().toString(), Toast.LENGTH_SHORT).show();
                     AnswerRepository answerRepository=new AnswerRepository(AnswerActivity.this);
                     answerRepository.SendAnswer(postID,answer.getText().toString());
                     dialog.dismiss();
+                    finish();
+                    overridePendingTransition( 0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition( 0, 0);
                 }
             }
         });

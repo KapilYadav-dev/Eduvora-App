@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +16,10 @@ import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import in.kay.edvora.Models.Answers;
@@ -41,18 +44,20 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        List<String> words = Arrays.asList(context.getResources().getStringArray(R.array.censored));
         Answers answers = list.get(position);
         User user = answers.getUser();
         String strans = answers.getAnswer();
+        String newtext = GetCensored(words, strans);
         String date = answers.getAnsweredAt();
         String ans_id = answers.getAnsweredAt();
-        int difference=GetDateDiff(date);
+        int difference = GetDateDiff(date);
         String name = user.getName();
         String imageUrl = user.getImageUrl();
         String user_id = user.get_id();
         String college = user.getCollege();
         holder.tvName.setText(name);
-        holder.tvAnswer.setText(strans);
+        holder.tvAnswer.setText(newtext);
         if (difference == 0) {
             holder.tvDays.setText("Answered Today");
         } else if (difference == 1) {
@@ -63,6 +68,16 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
             holder.tvDays.setText(difference + " days ago");
         }
         Picasso.get().load(imageUrl).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(holder.circleImageView);
+    }
+
+    private String GetCensored(List<String> words, String strans) {
+        String string = "";
+        for (String word : words) {
+            Pattern rx = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
+            strans = rx.matcher(strans).replaceAll(new String(new char[word.length()]).replace('\0', '*'));
+            string = strans;
+        }
+        return string;
     }
 
     @Override
