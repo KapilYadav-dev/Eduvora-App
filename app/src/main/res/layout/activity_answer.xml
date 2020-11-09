@@ -43,6 +43,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_profile"
                     android:layout_width="32dp"
+                    android:transitionName="Profile"
                     android:layout_height="32dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_image_holder"
@@ -54,6 +55,7 @@
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:transitionName="Name"
                     android:layout_marginStart="16dp"
                     android:layout_toRightOf="@id/iv_profile"
                     android:fontFamily="@font/gilroybold"

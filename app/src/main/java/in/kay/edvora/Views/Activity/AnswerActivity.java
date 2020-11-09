@@ -1,5 +1,7 @@
 package in.kay.edvora.Views.Activity;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -8,6 +10,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -48,35 +52,50 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AnswerActivity extends AppCompatActivity {
     String userId, userImage, question, postImage, name, days, postID, topic;
     TextView tvName, tvDays, tvQuestion, tvTopic;
-    ImageView iv_profileImage, iv_postImage,ivBack,ivChat;
+    ImageView iv_profileImage, iv_postImage, ivBack, ivChat;
     RelativeLayout rlAnswer;
     Dialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_answer);
         GetValues();
         Initz();
-        Uri uri=getIntent().getData();
-        if (uri!=null)
-        {
-            if (Prefs.getBoolean("isLoggedIn",false))
-            {
-                List<String> params=uri.getPathSegments();
-                String postId=params.get(params.size()-1);
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            if (Prefs.getBoolean("isLoggedIn", false)) {
+                List<String> params = uri.getPathSegments();
+                String postId = params.get(params.size() - 1);
+                ivBack.setVisibility(View.GONE);
                 LoadDataFromServer(postId, 0);
-            }
-            else {
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(this,"Please login first..");
-                startActivity(new Intent(this,Landing.class));
+            } else {
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(this, "Please login first..");
+                startActivity(new Intent(this, Landing.class));
             }
 
-        }else
-        LoadData();
+        } else
+            LoadData();
+        OnPhotoClick();
+    }
+
+    private void OnPhotoClick() {
+        iv_profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View image = iv_profileImage;
+                View text = tvName;
+                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation(AnswerActivity.this, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+                Intent intent=new Intent(AnswerActivity.this, Profile.class);
+                intent.putExtra("userId",userId);
+                startActivity(intent,options.toBundle());
+            }
+        });
     }
 
     private void LoadDataFromServer(final String string, final int i) {
+        Log.d("postId", "onCreate: " + string);
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMax(100);
         pd.setMessage("Loading...");
@@ -88,47 +107,41 @@ public class AnswerActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<HomeModel> call = apiInterface.getParticularFeed(string,"Bearer " +Prefs.getString("accessToken",""));
+        Call<HomeModel> call = apiInterface.getParticularFeed(string, "Bearer " + Prefs.getString("accessToken", ""));
         call.enqueue(new Callback<HomeModel>() {
             @Override
             public void onResponse(Call<HomeModel> call, Response<HomeModel> response) {
-                if (response.isSuccessful())
-                {
-                    if (i==0)
-                    {
-                        List<Answers> answers=response.body().getAnswers();
-                        HomeModel list=response.body();
+                if (response.isSuccessful()) {
+                    if (i == 0) {
+                        List<Answers> answers = response.body().getAnswers();
+                        HomeModel list = response.body();
                         question = list.getQuestion();
                         userId = list.getPostedBy().getId().get_id();
                         userImage = list.getPostedBy().getId().getImageUrl();
-                        postImage =list.getImageUrl();
+                        postImage = list.getImageUrl();
                         name = list.getPostedBy().getId().getName();
                         days = list.getCreatedAt();
-                        Date postDate=GetDate(days);
-                        int difference=GetDateDiff(postDate);
-                        days=Integer.toString(difference);
-                        topic =list.getSubject()+" ● "+list.getTopic();
+                        Date postDate = GetDate(days);
+                        int difference = GetDateDiff(postDate);
+                        days = Integer.toString(difference);
+                        topic = list.getSubject() + " ● " + list.getTopic();
                         ivChat.setVisibility(View.GONE);
                         rlAnswer.setVisibility(View.GONE);
                         LoadData();
                         LoadAnswers(answers);
-                    }
-                    else if (i==1){
-                        List<Answers> answers=response.body().getAnswers();
+                    } else if (i == 1) {
+                        List<Answers> answers = response.body().getAnswers();
                         LoadAnswers(answers);
                     }
                     pd.dismiss();
-                }
-                else if (response.code()==502)
-                {
-                    MyApplication application=new MyApplication();
-                    application.RefreshToken(Prefs.getString("refreshToken",""),AnswerActivity.this);
+                } else if (response.code() == 502) {
+                    MyApplication application = new MyApplication();
+                    application.RefreshToken(Prefs.getString("refreshToken", ""), AnswerActivity.this);
                     LoadDataFromServer(string, i);
-                }
-                else {
+                } else {
                     pd.dismiss();
                     try {
-                        Toast.makeText(AnswerActivity.this, "Error is "+response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AnswerActivity.this, "Error is " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -137,7 +150,8 @@ public class AnswerActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<HomeModel> call, Throwable t) {
-                Toast.makeText(AnswerActivity.this, "Failure  is "+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                pd.dismiss();
+                Toast.makeText(AnswerActivity.this, "Failure  is " + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -166,11 +180,9 @@ public class AnswerActivity extends AppCompatActivity {
         } else {
             tvDays.setText(difference + " days ago");
         }
-        if (!topic.equalsIgnoreCase(" ● "))
-        {
+        if (!topic.equalsIgnoreCase(" ● ")) {
             tvTopic.setText(topic);
-        }
-        else {
+        } else {
             tvTopic.setVisibility(View.GONE);
         }
 
@@ -190,20 +202,18 @@ public class AnswerActivity extends AppCompatActivity {
                 ShowDiag();
             }
         });
-        LoadDataFromServer(postID,1);
+        LoadDataFromServer(postID, 1);
     }
 
     private void LoadAnswers(List<Answers> list) {
-        RecyclerView recyclerView=findViewById(R.id.rv);
+        RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        AnswersAdapter answersAdapter=new AnswersAdapter(list,this);
+        AnswersAdapter answersAdapter = new AnswersAdapter(list, this);
         recyclerView.setAdapter(answersAdapter);
-        if (answersAdapter.getItemCount()==0)
-        {
+        if (answersAdapter.getItemCount() == 0) {
             findViewById(R.id.tv_no).setVisibility(View.VISIBLE);
             findViewById(R.id.rv).setVisibility(View.GONE);
-        }
-        else {
+        } else {
             findViewById(R.id.rv).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_no).setVisibility(View.GONE);
         }
@@ -211,13 +221,13 @@ public class AnswerActivity extends AppCompatActivity {
 
     private void ShowDiag() {
         ImageView close;
-        TextView post,dvQuestion;
+        TextView post, dvQuestion;
         final EditText answer;
         dialog.setContentView(R.layout.answer_diag);
-        dvQuestion=dialog.findViewById(R.id.dv_question);
-        close=dialog.findViewById(R.id.close);
-        post=dialog.findViewById(R.id.tv_submit);
-        answer=dialog.findViewById(R.id.et_answer);
+        dvQuestion = dialog.findViewById(R.id.dv_question);
+        close = dialog.findViewById(R.id.close);
+        post = dialog.findViewById(R.id.tv_submit);
+        answer = dialog.findViewById(R.id.et_answer);
         dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
@@ -234,31 +244,29 @@ public class AnswerActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(answer.getText().toString()))
-                {
+                if (TextUtils.isEmpty(answer.getText().toString())) {
                     answer.setHint("Enter some answer to post");
                     answer.requestFocus();
                     return;
-                }
-                else {
-                    AnswerRepository answerRepository=new AnswerRepository(AnswerActivity.this);
-                    answerRepository.SendAnswer(postID,answer.getText().toString());
+                } else {
+                    AnswerRepository answerRepository = new AnswerRepository(AnswerActivity.this);
+                    answerRepository.SendAnswer(postID, answer.getText().toString());
                     dialog.dismiss();
                     finish();
-                    overridePendingTransition( 0, 0);
+                    overridePendingTransition(0, 0);
                     startActivity(getIntent());
-                    overridePendingTransition( 0, 0);
+                    overridePendingTransition(0, 0);
                 }
             }
         });
     }
 
     private void Initz() {
-        dialog=new Dialog(this);
+        dialog = new Dialog(this);
         tvDays = findViewById(R.id.tvDays);
         tvName = findViewById(R.id.tvName);
-        ivBack=findViewById(R.id.back);
-        rlAnswer=findViewById(R.id.rl_one);
+        ivBack = findViewById(R.id.back);
+        rlAnswer = findViewById(R.id.rl_one);
         tvQuestion = findViewById(R.id.tvQuestion);
         tvTopic = findViewById(R.id.tvTopic);
         iv_profileImage = findViewById(R.id.iv_profile);
@@ -276,6 +284,7 @@ public class AnswerActivity extends AppCompatActivity {
         topic = getIntent().getStringExtra("topic");
         postID = getIntent().getStringExtra("postID");
     }
+
     public Date GetDate(String string) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {

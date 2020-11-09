@@ -58,6 +58,9 @@ public interface ApiInterface {
     @GET("feed/view/{id}")
     Call<HomeModel> getParticularFeed(@Path("id") String id, @Header("Authorization") String header);
 
+    @GET("profile/view/{id}")
+    Call<ResponseBody> viewProfile(@Path("id") String id, @Header("Authorization") String header);
+
     @GET("auth/getaccesstoken")
     Call<ResponseBody> getNewToken(@Header("Authorization") String header);
 
@@ -73,6 +76,5 @@ public interface ApiInterface {
     Call<ResponseBody> sendAnswer(@Field("questionId") String questionId,
                                   @Field("answer") String answer,
                                   @Header("Authorization") String header);
-
 
 }

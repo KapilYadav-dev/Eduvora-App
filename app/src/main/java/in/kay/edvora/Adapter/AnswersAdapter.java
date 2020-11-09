@@ -1,6 +1,10 @@
 package in.kay.edvora.Adapter;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import in.kay.edvora.Models.Answers;
 import in.kay.edvora.Models.User;
 import in.kay.edvora.R;
+import in.kay.edvora.Views.Activity.Profile;
 
 public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHolder> {
     List<Answers> list;
@@ -54,7 +59,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
         int difference = GetDateDiff(date);
         String name = user.getName();
         String imageUrl = user.getImageUrl();
-        String user_id = user.get_id();
+        final String user_id = user.get_id();
         String college = user.getCollege();
         holder.tvName.setText(name);
         holder.tvAnswer.setText(newtext);
@@ -68,6 +73,17 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
             holder.tvDays.setText(difference + " days ago");
         }
         Picasso.get().load(imageUrl).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(holder.circleImageView);
+        holder.circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View image = holder.circleImageView;
+                View text = holder.tvName;
+                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+                Intent intent=new Intent(context, Profile.class);
+                intent.putExtra("userId",user_id);
+                context.startActivity(intent,options.toBundle());
+            }
+        });
     }
 
     private String GetCensored(List<String> words, String strans) {

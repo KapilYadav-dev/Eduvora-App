@@ -71,13 +71,6 @@ public class HomeFragment extends Fragment {
                 Animatoo.animateSlideUp(context);
             }
         });
-        if (Prefs.getString("userType","student").equalsIgnoreCase("teacher"))
-        {
-            fab.setVisibility(View.GONE);
-        }
-        else {
-            fab.setVisibility(View.VISIBLE);
-        }
         recyclerView = view.findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new HomeFeedAdapter(initlist, context);

@@ -1,9 +1,11 @@
 package in.kay.edvora.Adapter;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ import in.kay.edvora.Models.PostedBy;
 import in.kay.edvora.R;
 import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Activity.AnswerActivity;
+import in.kay.edvora.Views.Activity.Profile;
 
 public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHolder> {
     List<HomeModel> list;
@@ -64,7 +67,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         PostedBy pb = list.get(position).getPostedBy();
         Id id = pb.getId();
-        String username = id.getName();
+        final String username = id.getName();
         final String userID = id.get_id();
         final String userimage = id.getImageUrl();
         String strDate = list.get(position).getCreatedAt();
@@ -181,6 +184,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                 txtIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, "Edvora");
                 txtIntent .putExtra(android.content.Intent.EXTRA_TEXT, list.get(position).getQuestion().substring(0,Math.min(list.get(position).getQuestion().length(),160))+"..."+"\n"+"-by  "+list.get(position).getPostedBy().getId().getName()+"\n"+"https://www.edvora.in/"+list.get(position).get_id());
                 context.startActivity(Intent.createChooser(txtIntent ,"Share"));
+            }
+        });
+        holder.circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View image = holder.circleImageView;
+                View text = holder.tvName;
+                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+                Intent intent=new Intent(context, Profile.class);
+                intent.putExtra("userId",userID);
+                context.startActivity(intent,options.toBundle());
             }
         });
     }
