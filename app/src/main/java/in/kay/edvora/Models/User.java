@@ -4,6 +4,7 @@ public class User {
     String _id;
     String name;
     String college;
+    String imageUrl;
 
     public String get_id() {
         return _id;
@@ -44,5 +45,4 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
-    String imageUrl;
 }

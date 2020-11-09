@@ -16,14 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,13 +30,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import in.kay.edvora.Adapter.AnswersAdapter;
 import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Models.Answers;
 import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.R;
 import in.kay.edvora.Repository.AnswerRepository;
-import in.kay.edvora.Repository.HomeRepository;
 import in.kay.edvora.Utils.CustomToast;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,7 +62,7 @@ public class AnswerActivity extends AppCompatActivity {
             {
                 List<String> params=uri.getPathSegments();
                 String postId=params.get(params.size()-1);
-                LoadDataFromServer(postId);
+                LoadDataFromServer(postId, 0);
             }
             else {
                 CustomToast customToast=new CustomToast();
@@ -75,7 +74,7 @@ public class AnswerActivity extends AppCompatActivity {
         LoadData();
     }
 
-    private void LoadDataFromServer(String string) {
+    private void LoadDataFromServer(String string, final int i) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -87,20 +86,29 @@ public class AnswerActivity extends AppCompatActivity {
             public void onResponse(Call<HomeModel> call, Response<HomeModel> response) {
                 if (response.isSuccessful())
                 {
-                    HomeModel list=response.body();
-                    question = list.getQuestion();
-                    userId = list.getPostedBy().getId().get_id();
-                    userImage = list.getPostedBy().getId().getImageUrl();
-                    postImage =list.getImageUrl();
-                    name = list.getPostedBy().getId().getName();
-                    days = list.getCreatedAt();
-                    Date postDate=GetDate(days);
-                    int difference=GetDateDiff(postDate);
-                    days=Integer.toString(difference);
-                    topic =list.getSubject()+" ● "+list.getTopic();
-                    ivChat.setVisibility(View.GONE);
-                    rlAnswer.setVisibility(View.GONE);
-                    LoadData();
+                    if (i==0)
+                    {
+                        List<Answers> answers=response.body().getAnswers();
+                        HomeModel list=response.body();
+                        question = list.getQuestion();
+                        userId = list.getPostedBy().getId().get_id();
+                        userImage = list.getPostedBy().getId().getImageUrl();
+                        postImage =list.getImageUrl();
+                        name = list.getPostedBy().getId().getName();
+                        days = list.getCreatedAt();
+                        Date postDate=GetDate(days);
+                        int difference=GetDateDiff(postDate);
+                        days=Integer.toString(difference);
+                        topic =list.getSubject()+" ● "+list.getTopic();
+                        ivChat.setVisibility(View.GONE);
+                        rlAnswer.setVisibility(View.GONE);
+                        LoadData();
+                        LoadAnswers(answers);
+                    }
+                    else if (i==1){
+                        List<Answers> answers=response.body().getAnswers();
+                        LoadAnswers(answers);
+                    }
                 }
                 else {
                     try {
@@ -166,11 +174,23 @@ public class AnswerActivity extends AppCompatActivity {
                 ShowDiag();
             }
         });
-        LoadAnswers();
+        LoadDataFromServer(postID,1);
     }
 
-    private void LoadAnswers() {
-
+    private void LoadAnswers(List<Answers> list) {
+        RecyclerView recyclerView=findViewById(R.id.rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        AnswersAdapter answersAdapter=new AnswersAdapter(list,this);
+        recyclerView.setAdapter(answersAdapter);
+        if (answersAdapter.getItemCount()==0)
+        {
+            findViewById(R.id.tv_no).setVisibility(View.VISIBLE);
+            findViewById(R.id.rv).setVisibility(View.GONE);
+        }
+        else {
+            findViewById(R.id.rv).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_no).setVisibility(View.GONE);
+        }
     }
 
     private void ShowDiag() {

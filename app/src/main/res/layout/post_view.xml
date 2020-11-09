@@ -121,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_post_img" />
+                android:src="@drawable/img_place_holder" />
 
             <ImageView
                 android:layout_width="match_parent"
