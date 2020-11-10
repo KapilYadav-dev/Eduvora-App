@@ -64,7 +64,6 @@ public class MyApplication extends Application {
                         String req = response.body().string();
                         JSONObject jsonObject = new JSONObject(req);
                         String accessToken = jsonObject.getString("accessToken");
-                  //      Toast.makeText(context, "New access token is "+accessToken, Toast.LENGTH_SHORT).show();
                         Prefs.putString("accessToken", accessToken);
                         Log.d("ACCESSTOKENLOG", "NEWTOKEN: "+Prefs.getString("accessToken",""));
                     } catch (IOException | JSONException e) {

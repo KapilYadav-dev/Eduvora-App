@@ -21,4 +21,10 @@
     <font
         android:font="@font/segoeui"
         android:fontWeight="100" />
+    <font
+        android:font="@font/sans_bold"
+        android:fontWeight="100" />
+    <font
+        android:font="@font/sans_regular"
+        android:fontWeight="100" />
 </font-family>

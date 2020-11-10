@@ -85,12 +85,23 @@ public class Profile extends AppCompatActivity {
             tvCollege.setText("Faculty at "+college);
         }else {
             tvYear.setVisibility(View.VISIBLE);
-            tvYear.setText(Integer.toString(year)+" Year");
+            tvYear.setText(GetStringOfYear(year)+" Year");
             tvCollege.setText("Student at "+college);
         }
         tvName.setText(name);
         tvBranch.setText(branch);
         Picasso.get().load(imageUrl).into(circleImageView);
+    }
+
+    private String GetStringOfYear(Integer year) {
+        if (year==1)
+            return "First";
+        else if (year==2)
+            return "Second";
+        else if (year==3)
+            return "Third";
+        else
+            return "Final";
     }
 
     private void Initz() {
