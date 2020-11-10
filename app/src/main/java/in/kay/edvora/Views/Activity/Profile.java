@@ -1,5 +1,6 @@
 package in.kay.edvora.Views.Activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -17,8 +18,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.R;
+import in.kay.edvora.Utils.CustomToast;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +43,12 @@ public class Profile extends AppCompatActivity {
     }
 
     private void GetAllData() {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMax(100);
+        pd.setMessage("Loading...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -53,6 +62,7 @@ public class Profile extends AppCompatActivity {
                 try {
                     if (response.isSuccessful())
                     {
+                        pd.dismiss();
                         String string=response.body().string();
                         JSONObject jsonObject=new JSONObject(string);
                         String userType=jsonObject.getString("userType");
@@ -65,6 +75,18 @@ public class Profile extends AppCompatActivity {
                         Integer year=object.getInt("year");
                         LoadData(userType,name,email,branch,college,year,imageUrl);
                     }
+                    else if (response.code()==502)
+                    {
+                        MyApplication myApplication = new MyApplication();
+                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""),Profile.this);
+                        GetAllData();
+                    }
+                    else {
+                        pd.dismiss();
+                        CustomToast customToast=new CustomToast();
+                        customToast.ShowToast(Profile.this,"Error: Server is down..");
+                        onBackPressed();
+                    }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -73,7 +95,10 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                pd.dismiss();
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(Profile.this,"Failure: Server is down.."+t.getLocalizedMessage());
+                onBackPressed();
             }
         });
     }
