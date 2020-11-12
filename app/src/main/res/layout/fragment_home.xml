@@ -1,42 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipe"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@color/homeback"
-    android:layout_height="match_parent"
-    tools:context=".Views.Fragments.HomeFragment">
+    android:layout_height="match_parent">
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:background="@color/homeback"
+        tools:context=".Views.Fragments.HomeFragment">
+
+        <!-- ListView、ScrollView、RecyclerView、Other -->
+        <com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:shimmer="http://schemas.android.com/tools"
             android:id="@+id/shimmerFrameLayout"
             android:layout_width="wrap_content"
-            android:layerType="software"
             android:layout_height="match_parent"
+            android:layerType="software"
             shimmer:duration="1000">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-            <include layout="@layout/shimmer_post_view"/>
-            <include layout="@layout/shimmer_post_view"/>
+
+                <include layout="@layout/shimmer_post_view" />
+
+                <include layout="@layout/shimmer_post_view" />
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv"
-            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    <ImageView
-        android:id="@+id/iv_ask"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_fab"
-        android:layout_gravity="bottom|end"/>
-</FrameLayout>
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_ask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="100dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab" />
+    </FrameLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

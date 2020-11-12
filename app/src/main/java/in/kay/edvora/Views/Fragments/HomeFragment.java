@@ -2,34 +2,23 @@ package in.kay.edvora.Views.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.pixplicity.easyprefs.library.Prefs;
-import com.yalantis.phoenix.PullToRefreshView;
-
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import in.kay.edvora.Adapter.HomeFeedAdapter;
@@ -64,13 +53,13 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
         fab=view.findViewById(R.id.iv_ask);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(context, AskQuestion.class));
-                Animatoo.animateSlideUp(context);
-            }
+        fab.setOnClickListener(view1 -> {
+            startActivity(new Intent(context, AskQuestion.class));
+            Animatoo.animateSlideUp(context);
         });
+        SwipeRefreshLayout layout = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
+        layout.setOnRefreshListener(() -> DoRefresh(layout) );
+        layout.setRefreshing(false);
         recyclerView = view.findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new HomeFeedAdapter(initlist, context);
@@ -79,8 +68,13 @@ public class HomeFragment extends Fragment {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
         homeViewModel = ViewModelProviders.of((FragmentActivity) context).get(HomeViewModel.class);
-        LoadData();
+        LoadData(layout);
         ShowHideFab();
+    }
+
+    private void DoRefresh(SwipeRefreshLayout layout) {
+        final Handler ha = new Handler();
+        ha.postDelayed(() ->LoadData(layout), 2500);
     }
 
     private void ShowHideFab() {
@@ -99,10 +93,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void LoadData() {
-            homeViewModel.getFeed(context).observe(getViewLifecycleOwner(), new Observer<List<HomeModel>>() {
-            @Override
-            public void onChanged(List<HomeModel> homeModels) {
+    private void LoadData(SwipeRefreshLayout layout) {
+            homeViewModel.getFeed(context).observe(getViewLifecycleOwner(), homeModels -> {
                 shimmerFrameLayout.setVisibility(View.GONE);
                 if (homeModels !=null)
                 {
@@ -110,7 +102,7 @@ public class HomeFragment extends Fragment {
                     adapter.setNewData(homeModels,context);
                 }
                 recyclerView.setVisibility(View.VISIBLE);
-            }
-        });
+                layout.setRefreshing(false);
+            });
     }
 }

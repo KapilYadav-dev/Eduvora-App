@@ -96,6 +96,7 @@ public class LoginFragment extends Fragment {
                            Prefs.putString("userType",jsonObject.getString("type"));
                            Prefs.putString("accessToken",jsonObject.getString("accessToken"));
                            Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
+                           Prefs.putString("userId",jsonObject.getString("userId"));
                            Prefs.putBoolean("isLoggedIn",true);
                            Prefs.putBoolean("isProfileComplete",true);
                            CustomToast customToast=new CustomToast();

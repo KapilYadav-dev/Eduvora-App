@@ -126,6 +126,7 @@ public class OtpFragment extends Fragment {
                         String accessToken=jsonObject.getString("accessToken");
                         Prefs.putBoolean("isLoggedIn",true);
                         Prefs.putString("userType",userType);
+                        Prefs.putString("userId",jsonObject.getString("userId"));
                         Prefs.putString("refreshToken",refreshToken);
                         Prefs.putString("accessToken",accessToken);
                         if (userType.equalsIgnoreCase("student")) mFragment = new StudentDetailFragment();

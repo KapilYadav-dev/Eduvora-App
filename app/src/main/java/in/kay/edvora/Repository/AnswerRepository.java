@@ -49,6 +49,7 @@ public class AnswerRepository {
                 Toast.makeText(context, "Code is "+response.code(), Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful())
                 {
+                    pd.dismiss();
                     CustomToast customToast=new CustomToast();
                     customToast.ShowToast(context,"Added answer Successfully");
                 }
@@ -59,13 +60,13 @@ public class AnswerRepository {
                 }
                 else {
                     try {
+                        pd.dismiss();
                         CustomToast customToast=new CustomToast();
                         customToast.ShowToast(context,response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                pd.dismiss();
             }
 
             @Override

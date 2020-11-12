@@ -13,7 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface ApiInterface {
-    String BASE_URL = "http://192.168.1.2:8080/";
+    String BASE_URL = "https://edvora.herokuapp.com/";
 
     @FormUrlEncoded
     @POST("auth/login")

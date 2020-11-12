@@ -1,6 +1,5 @@
 package in.kay.edvora.Views.Activity;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -9,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
@@ -81,16 +82,13 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void OnPhotoClick() {
-        iv_profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View image = iv_profileImage;
-                View text = tvName;
-                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation(AnswerActivity.this, Pair.create(image, "Profile"), Pair.create(text, "Name"));
-                Intent intent=new Intent(AnswerActivity.this, Profile.class);
-                intent.putExtra("userId",userId);
-                startActivity(intent,options.toBundle());
-            }
+        iv_profileImage.setOnClickListener(view -> {
+            View image = iv_profileImage;
+            View text = tvName;
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(AnswerActivity.this, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+            Intent intent = new Intent(AnswerActivity.this, Profile.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent, options.toBundle());
         });
     }
 
@@ -164,12 +162,7 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void LoadData() {
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        ivBack.setOnClickListener(view -> onBackPressed());
         Integer difference = Integer.parseInt(days);
         if (difference == 0) {
             tvDays.setText("Asked Today");
@@ -196,12 +189,7 @@ public class AnswerActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(userImage) && postImage != "") {
             Picasso.get().load(userImage).error(R.drawable.ic_image_holder).placeholder(R.drawable.ic_image_holder).into(iv_profileImage);
         }
-        rlAnswer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ShowDiag();
-            }
-        });
+        rlAnswer.setOnClickListener(view -> ShowDiag());
         LoadDataFromServer(postID, 1);
     }
 
@@ -228,37 +216,37 @@ public class AnswerActivity extends AppCompatActivity {
         close = dialog.findViewById(R.id.close);
         post = dialog.findViewById(R.id.tv_submit);
         answer = dialog.findViewById(R.id.et_answer);
-        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
         dvQuestion.setText(question);
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        close.setOnClickListener(view -> dialog.dismiss());
+        post.setOnClickListener(view -> {
+            if (TextUtils.isEmpty(answer.getText().toString())) {
+                answer.setHint("Enter some answer to post");
+                answer.requestFocus();
+                return;
+            } else {
+                AnswerRepository answerRepository = new AnswerRepository(AnswerActivity.this);
+                answerRepository.SendAnswer(postID, answer.getText().toString());
                 dialog.dismiss();
             }
         });
-        post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TextUtils.isEmpty(answer.getText().toString())) {
-                    answer.setHint("Enter some answer to post");
-                    answer.requestFocus();
-                    return;
-                } else {
-                    AnswerRepository answerRepository = new AnswerRepository(AnswerActivity.this);
-                    answerRepository.SendAnswer(postID, answer.getText().toString());
-                    dialog.dismiss();
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(getIntent());
-                    overridePendingTransition(0, 0);
-                }
-            }
-        });
+    }
+
+    private void DoRefresh(SwipeRefreshLayout layout) {
+        final Handler ha = new Handler();
+        ha.postDelayed(() ->RestartApp(layout), 2500);
+    }
+
+    private void RestartApp(SwipeRefreshLayout layout) {
+        layout.setRefreshing(false);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 
     private void Initz() {
@@ -272,6 +260,8 @@ public class AnswerActivity extends AppCompatActivity {
         iv_profileImage = findViewById(R.id.iv_profile);
         ivChat = findViewById(R.id.iv_chat);
         iv_postImage = findViewById(R.id.iv_postimg);
+        SwipeRefreshLayout layout = (SwipeRefreshLayout) findViewById(R.id.swipe);
+        layout.setOnRefreshListener(() -> DoRefresh(layout) );
     }
 
     private void GetValues() {

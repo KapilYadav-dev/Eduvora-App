@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/homeback"
     tools:context=".Views.Activity.Profile">
 
     <ImageView
@@ -15,7 +15,6 @@
         android:elevation="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,7 +57,7 @@
                 android:layout_marginTop="200dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="#FFFFFF"
                 android:elevation="20dp"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -80,7 +79,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/gilroyblack"
                         android:maxLines="1"
-                        android:text="Kapil Yadav"
+                        android:text="Loading"
                         android:textColor="#000000"
                         android:textSize="28dp"
                         android:transitionName="Name"
@@ -101,7 +100,7 @@
                         android:fontFamily="@font/sans_regular"
                         android:letterSpacing="0.01"
                         android:maxLines="2"
-                        android:text="II Year"
+                        android:text="Loading"
                         android:textColor="#999999"
                         android:textSize="18dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +119,7 @@
                         android:fontFamily="@font/sans_regular"
                         android:letterSpacing="0.01"
                         android:maxLines="2"
-                        android:text="Computer Science Engineering"
+                        android:text="Loading"
                         android:textColor="#999999"
                         android:textSize="18dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -141,7 +140,7 @@
                         android:fontFamily="@font/sans_regular"
                         android:letterSpacing="0.01"
                         android:maxLines="2"
-                        android:text="Student at AKGEC"
+                        android:text="Loading"
                         android:textColor="#999"
                         android:textSize="18dp"
                         app:layout_constraintBottom_toBottomOf="parent"

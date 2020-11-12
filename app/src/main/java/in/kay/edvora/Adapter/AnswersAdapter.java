@@ -5,9 +5,12 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -73,17 +77,34 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
             holder.tvDays.setText(difference + " days ago");
         }
         Picasso.get().load(imageUrl).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(holder.circleImageView);
-        holder.circleImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View image = holder.circleImageView;
-                View text = holder.tvName;
-                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
-                Intent intent=new Intent(context, Profile.class);
-                intent.putExtra("userId",user_id);
-                context.startActivity(intent,options.toBundle());
-            }
+        holder.circleImageView.setOnClickListener(view -> {
+            View image = holder.circleImageView;
+            View text = holder.tvName;
+            ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+            Intent intent=new Intent(context, Profile.class);
+            intent.putExtra("userId",user_id);
+            context.startActivity(intent,options.toBundle());
         });
+        if (user_id.equalsIgnoreCase(Prefs.getString("userId","")))
+        {
+            holder.more.setVisibility(View.VISIBLE);
+            holder.more.setOnClickListener(view -> {
+                Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
+                PopupMenu popupMenu=new PopupMenu(wrapper,view);
+                popupMenu.inflate(R.menu.popup_menu);
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    switch (menuItem.getItemId()){
+                        case R.id.edit:
+                            Toast.makeText(context, "Edit button clicked", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.delete:
+                            Toast.makeText(context, "Delete button clicked", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    return true;
+                });
+                popupMenu.show();
+            }); }
     }
 
     private String GetCensored(List<String> words, String strans) {
@@ -104,12 +125,13 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvAnswer, tvDays;
         CircleImageView circleImageView;
-
+        ImageView more;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAnswer = itemView.findViewById(R.id.tvAnswer);
             tvDays = itemView.findViewById(R.id.tvDays);
             tvName = itemView.findViewById(R.id.tvName);
+            more = itemView.findViewById(R.id.more);
             circleImageView = itemView.findViewById(R.id.circleImageView);
         }
     }

@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +24,9 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -50,12 +53,13 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         this.list = list;
         this.context = context;
     }
-    public void setNewData(List<HomeModel> list, Context context)
-    {
+
+    public void setNewData(List<HomeModel> list, Context context) {
         this.context = context;
-        this.list=list;
+        this.list = list;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -82,19 +86,13 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         } else {
             holder.tvDate.setText(difference + " days ago");
         }
-        if (TextUtils.isEmpty(list.get(position).getSubject()) && TextUtils.isEmpty(list.get(position).getTopic()))
-        {
+        if (TextUtils.isEmpty(list.get(position).getSubject()) && TextUtils.isEmpty(list.get(position).getTopic())) {
             holder.tvTopic.setVisibility(View.GONE);
-        }
-        else if (TextUtils.isEmpty(list.get(position).getTopic()))
-        {
+        } else if (TextUtils.isEmpty(list.get(position).getTopic())) {
             holder.tvTopic.setText(list.get(position).getSubject());
-        }
-        else if (TextUtils.isEmpty(list.get(position).getSubject()))
-        {
+        } else if (TextUtils.isEmpty(list.get(position).getSubject())) {
             holder.tvTopic.setText(list.get(position).getTopic());
-        }
-        else {
+        } else {
             holder.tvTopic.setText(list.get(position).getSubject() + " ● " + list.get(position).getTopic());
         }
         holder.tvQuestion.setText(list.get(position).getQuestion());
@@ -119,9 +117,8 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                                     .into(holder.iv_postimg);
                         }
                     });
-        } else  holder.cardView.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(userimage))
-        {
+        } else holder.cardView.setVisibility(View.GONE);
+        if (!TextUtils.isEmpty(userimage)) {
             Picasso.get()
                     .load(userimage)
                     .networkPolicy(NetworkPolicy.OFFLINE)
@@ -141,60 +138,68 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                         }
                     });
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.cl, ViewCompat.getTransitionName(holder.cl));
-                Intent intent=new Intent(context,AnswerActivity.class);
-                intent.putExtra("question",list.get(position).getQuestion());
-                intent.putExtra("days",Integer.toString(difference));
-                intent.putExtra("postID",list.get(position).get_id());
-                intent.putExtra("name",list.get(position).getPostedBy().getId().getName());
-                intent.putExtra("topic",list.get(position).getSubject() + " ● " + list.get(position).getTopic());
-                if (list.get(position).getImageUrl()!=null)
-                {
-                    intent.putExtra("postimageUrl",list.get(position).getImageUrl());
-                }
-                else {
-                    intent.putExtra("postimageUrl", "");
-                }
-                if (!TextUtils.isEmpty(userimage))
-                {
-                    intent.putExtra("profileimageUrl",userimage);
-                }
-                else {
-                    intent.putExtra("profileimageUrl", "");
-                }
-                intent.putExtra("userId",userID);
-                context.startActivity(intent,options.toBundle());
+        if (Prefs.getString("userId", "").equalsIgnoreCase(userID)) {
+            holder.ivMore.setVisibility(View.VISIBLE);
+            holder.ivMore.setOnClickListener(view -> {
+                Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
+                PopupMenu popupMenu=new PopupMenu(wrapper,view);
+                popupMenu.inflate(R.menu.popup_menu);
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    switch (menuItem.getItemId()){
+                        case R.id.edit:
+                            Toast.makeText(context, "Edit button clicked", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.delete:
+                            Toast.makeText(context, "Delete button clicked", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    return true;
+                });
+                popupMenu.show();
+            });
+        }
+        holder.itemView.setOnClickListener(view -> {
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder.cl, ViewCompat.getTransitionName(holder.cl));
+            Intent intent = new Intent(context, AnswerActivity.class);
+            intent.putExtra("question", list.get(position).getQuestion());
+            intent.putExtra("days", Integer.toString(difference));
+            intent.putExtra("isFirstTime", true);
+            intent.putExtra("postID", list.get(position).get_id());
+            intent.putExtra("name", list.get(position).getPostedBy().getId().getName());
+            intent.putExtra("topic", list.get(position).getSubject() + " ● " + list.get(position).getTopic());
+            if (list.get(position).getImageUrl() != null) {
+                intent.putExtra("postimageUrl", list.get(position).getImageUrl());
+            } else {
+                intent.putExtra("postimageUrl", "");
             }
+            if (!TextUtils.isEmpty(userimage)) {
+                intent.putExtra("profileimageUrl", userimage);
+            } else {
+                intent.putExtra("profileimageUrl", "");
+            }
+            intent.putExtra("userId", userID);
+            context.startActivity(intent, options.toBundle());
         });
-        holder.llBookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(context,"Bookmark is clicked");
-            }
+        holder.llBookmark.setOnClickListener(view -> {
+            CustomToast customToast = new CustomToast();
+            customToast.ShowToast(context, "Bookmark is clicked");
         });
-        holder.llShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent txtIntent = new Intent(android.content.Intent.ACTION_SEND);
-                txtIntent .setType("text/plain");
-                txtIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, "Edvora");
-                txtIntent .putExtra(android.content.Intent.EXTRA_TEXT, list.get(position).getQuestion().substring(0,Math.min(list.get(position).getQuestion().length(),160))+"..."+"\n"+"-by  "+list.get(position).getPostedBy().getId().getName()+"\n"+"https://www.edvora.in/"+list.get(position).get_id());
-                context.startActivity(Intent.createChooser(txtIntent ,"Share"));
-            }
+        holder.llShare.setOnClickListener(view -> {
+            Intent txtIntent = new Intent(Intent.ACTION_SEND);
+            txtIntent.setType("text/plain");
+            txtIntent.putExtra(Intent.EXTRA_SUBJECT, "Edvora");
+            txtIntent.putExtra(Intent.EXTRA_TEXT, list.get(position).getQuestion().substring(0, Math.min(list.get(position).getQuestion().length(), 160)) + "..." + "\n" + "-by  " + list.get(position).getPostedBy().getId().getName() + "\n" + "https://www.edvora.in/post/" + list.get(position).get_id());
+            context.startActivity(Intent.createChooser(txtIntent, "Share"));
         });
         holder.circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 View image = holder.circleImageView;
                 View text = holder.tvName;
-                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
-                Intent intent=new Intent(context, Profile.class);
-                intent.putExtra("userId",userID);
-                context.startActivity(intent,options.toBundle());
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+                Intent intent = new Intent(context, Profile.class);
+                intent.putExtra("userId", userID);
+                context.startActivity(intent, options.toBundle());
             }
         });
     }
@@ -227,18 +232,19 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         TextView tvName, tvTopic, tvQuestion, tvDate;
         CardView cardView;
         LinearLayout llAnswer, llBookmark, llShare;
-        ImageView iv_postimg;
+        ImageView iv_postimg, ivMore;
         ConstraintLayout cl;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             circleImageView = itemView.findViewById(R.id.iv_profile);
             tvName = itemView.findViewById(R.id.tvName);
-            cl=itemView.findViewById(R.id.cl);
+            cl = itemView.findViewById(R.id.cl);
             tvTopic = itemView.findViewById(R.id.tvTopic);
             tvDate = itemView.findViewById(R.id.tvDays);
             tvQuestion = itemView.findViewById(R.id.tvQuestion);
             iv_postimg = itemView.findViewById(R.id.iv_postimg);
+            ivMore = itemView.findViewById(R.id.iv_more);
             cardView = itemView.findViewById(R.id.cardView);
             llAnswer = itemView.findViewById(R.id.llAnswer);
             llBookmark = itemView.findViewById(R.id.llBookmark);

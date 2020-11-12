@@ -5,6 +5,10 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "in.kay.edvora"
         minSdkVersion 22
@@ -76,6 +80,8 @@ dependencies {
     implementation 'com.github.mohammadatif:Animatoo:master'
     //ReadMoreTextview
     implementation 'com.borjabravo:readmoretextview:2.1.0'
+    //PullTORefresh
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //CropToImage
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     androidTestImplementation 'androidx.test:rules:1.3.0-beta01'
