@@ -54,6 +54,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         List<String> words = Arrays.asList(context.getResources().getStringArray(R.array.censored));
+
         Answers answers = list.get(position);
         User user = answers.getUser();
         String strans = answers.getAnswer();

@@ -54,12 +54,6 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         this.context = context;
     }
 
-    public void setNewData(List<HomeModel> list, Context context) {
-        this.context = context;
-        this.list = list;
-        notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -74,6 +68,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
         final String username = id.getName();
         final String userID = id.get_id();
         final String userimage = id.getImageUrl();
+
         String strDate = list.get(position).getCreatedAt();
         Date postDate = GetDate(strDate);
         final Integer difference = GetDateDiff(postDate);
