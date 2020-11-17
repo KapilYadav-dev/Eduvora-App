@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -133,26 +132,38 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
                         }
                     });
         }
-        if (Prefs.getString("userId", "").equalsIgnoreCase(userID)) {
+
+        if (Prefs.getString("userId", "").equalsIgnoreCase(userID) && difference < 2)
             holder.ivMore.setVisibility(View.VISIBLE);
-            holder.ivMore.setOnClickListener(view -> {
-                Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
-                PopupMenu popupMenu=new PopupMenu(wrapper,view);
+        else if (!Prefs.getString("userId", "").equalsIgnoreCase(userID))
+            holder.ivMore.setVisibility(View.VISIBLE);
+        else
+            holder.ivMore.setVisibility(View.GONE);
+
+
+        holder.ivMore.setOnClickListener(view -> {
+            Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
+            PopupMenu popupMenu = new PopupMenu(wrapper, view);
+            if (Prefs.getString("userId", "").equalsIgnoreCase(userID)) {
                 popupMenu.inflate(R.menu.popup_menu);
-                popupMenu.setOnMenuItemClickListener(menuItem -> {
-                    switch (menuItem.getItemId()){
-                        case R.id.edit:
-                            Toast.makeText(context, "Edit button clicked", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.id.delete:
-                            Toast.makeText(context, "Delete button clicked", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    return true;
-                });
-                popupMenu.show();
+            } else
+                popupMenu.inflate(R.menu.popup_menu_normal);
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.edit:
+                        Toast.makeText(context, "Edit button clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.delete:
+                        Toast.makeText(context, "Delete button clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.report:
+                        Toast.makeText(context, "Report button clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
             });
-        }
+            popupMenu.show();
+        });
         holder.itemView.setOnClickListener(view -> {
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder.cl, ViewCompat.getTransitionName(holder.cl));
             Intent intent = new Intent(context, AnswerActivity.class);
