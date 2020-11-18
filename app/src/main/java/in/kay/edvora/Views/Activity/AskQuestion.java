@@ -81,26 +81,15 @@ public class AskQuestion extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 close.setEnabled(false);
-                Toast.makeText(AskQuestion.this, "Clicked", Toast.LENGTH_SHORT).show();
-                GoBack();
+                onBackPressed();
             }
         });
-        ask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AddQuestion();
-            }
-        });
-        ivAttach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
-                        .setOutputCompressQuality(50)
-                        .start(AskQuestion.this);
-            }
-        });
+        ask.setOnClickListener(view -> AddQuestion());
+        ivAttach.setOnClickListener(view -> CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
+                .setOutputCompressQuality(50)
+                .start(AskQuestion.this));
     }
 
     private void AddQuestion() {
@@ -137,7 +126,7 @@ public class AskQuestion extends AppCompatActivity {
                             GoBack();
                         } else if (response.code() == 502) {
                             MyApplication myApplication = new MyApplication();
-                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""),AskQuestion.this);
+                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""), AskQuestion.this);
                             AddQuestion();
                         } else {
                             try {
@@ -224,7 +213,13 @@ public class AskQuestion extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        GoBack();
+        if (etQuestion.getText().length() < 1) {
+            super.onBackPressed();
+            Animatoo.animateSlideDown(this);
+            this.finish();
+        } else {
+            GoBack();
+        }
     }
 
     private void GoBack() {
@@ -270,12 +265,7 @@ public class AskQuestion extends AppCompatActivity {
                     }
                 });
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-            }
-        });
+        }).addOnFailureListener(e -> pd.dismiss());
         return imgUrl;
     }
 
@@ -309,7 +299,7 @@ public class AskQuestion extends AppCompatActivity {
                         GoBack();
                     } else if (response.code() == 502) {
                         MyApplication myApplication = new MyApplication();
-                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""),AskQuestion.this);
+                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""), AskQuestion.this);
                         AddQuestion();
                     } else {
                         try {

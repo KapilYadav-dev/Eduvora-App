@@ -5,19 +5,6 @@
     android:layout_height="wrap_content"
     android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"
-        android:padding="15dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_more"
-        app:layout_constraintBottom_toTopOf="@+id/tvQuestion"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"
         android:layout_width="32dp"

@@ -86,26 +86,6 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
             intent.putExtra("userId",user_id);
             context.startActivity(intent,options.toBundle());
         });
-        if (user_id.equalsIgnoreCase(Prefs.getString("userId","")))
-        {
-            holder.more.setVisibility(View.VISIBLE);
-            holder.more.setOnClickListener(view -> {
-                Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
-                PopupMenu popupMenu=new PopupMenu(wrapper,view);
-                popupMenu.inflate(R.menu.popup_menu);
-                popupMenu.setOnMenuItemClickListener(menuItem -> {
-                    switch (menuItem.getItemId()){
-                        case R.id.edit:
-                            Toast.makeText(context, "Edit button clicked", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.id.delete:
-                            Toast.makeText(context, "Delete button clicked", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    return true;
-                });
-                popupMenu.show();
-            }); }
     }
 
     private String GetCensored(List<String> words, String strans) {
@@ -126,13 +106,11 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvAnswer, tvDays;
         CircleImageView circleImageView;
-        ImageView more;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAnswer = itemView.findViewById(R.id.tvAnswer);
             tvDays = itemView.findViewById(R.id.tvDays);
             tvName = itemView.findViewById(R.id.tvName);
-            more = itemView.findViewById(R.id.more);
             circleImageView = itemView.findViewById(R.id.circleImageView);
         }
     }
