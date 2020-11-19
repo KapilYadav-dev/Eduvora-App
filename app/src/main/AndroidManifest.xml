@@ -12,18 +12,21 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Edvora"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
-        <activity android:name=".Views.Activity.Profile"/>
+        <activity android:name=".Views.Activity.UploadLibrary"></activity>
+        <activity android:name=".Views.Activity.Profile" />
         <activity android:name=".Views.Activity.AnswerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="www.edvora.in"
                     android:scheme="https" />

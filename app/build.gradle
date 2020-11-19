@@ -80,6 +80,8 @@ dependencies {
     implementation 'com.github.mohammadatif:Animatoo:master'
     //ReadMoreTextview
     implementation 'com.borjabravo:readmoretextview:2.1.0'
+    //File Picker
+    implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.10'
     //PullTORefresh
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //CropToImage
