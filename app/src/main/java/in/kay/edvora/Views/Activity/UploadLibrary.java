@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -176,8 +177,24 @@ public class UploadLibrary extends AppCompatActivity {
             customToast.ShowToast(UploadLibrary.this, "Please choose something to upload...");
             return;
         } else {
-            UploadImageToDatabase(uri);
+            long sizeinMb = getFileSize(uri) / 1024 / 1024;
+            if (sizeinMb<10)
+                UploadImageToDatabase(uri);
+            else
+            {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(UploadLibrary.this,"Please use a document <5 MB.\nReduce further to "+Integer.toString((int)(sizeinMb-5))+" MB");
+            }
         }
+    }
+
+    private long getFileSize(Uri fileUri) {
+        Cursor returnCursor = getContentResolver().
+                query(fileUri, null, null, null, null);
+        int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+        returnCursor.moveToFirst();
+
+        return returnCursor.getLong(sizeIndex);
     }
 
     private void UploadImageToDatabase(Uri uri) {

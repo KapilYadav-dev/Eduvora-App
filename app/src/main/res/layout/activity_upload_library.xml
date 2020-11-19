@@ -249,8 +249,8 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/ic_selected_doc"
                     android:layout_centerVertical="true"/>
                 <TextView

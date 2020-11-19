@@ -11,11 +11,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.pixplicity.easyprefs.library.Prefs;
+
 import in.kay.edvora.R;
 import in.kay.edvora.Views.Fragments.ClassFragment;
+import in.kay.edvora.Views.Fragments.FacultyClassroom;
 import in.kay.edvora.Views.Fragments.HomeFragment;
 import in.kay.edvora.Views.Fragments.LibraryFragment;
 import in.kay.edvora.Views.Fragments.ProfileFragment;
+import in.kay.edvora.Views.Fragments.StudentClassroom;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
                         SwitchFragement();
                         break;
                     case 2:
-                        mFragment = new ClassFragment();
+                        String str=Prefs.getString("userType","student");
+                        if (str.equalsIgnoreCase("student"))
+                            mFragment = new StudentClassroom();
+                        else
+                            mFragment=new FacultyClassroom();
                         SwitchFragement();
                         break;
                     case 3:
