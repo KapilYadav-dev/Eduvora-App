@@ -5,7 +5,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import androidx.fragment.app.FragmentManager;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import in.kay.edvora.R;
-import in.kay.edvora.Views.Fragments.ClassFragment;
 import in.kay.edvora.Views.Fragments.FacultyClassroom;
 import in.kay.edvora.Views.Fragments.HomeFragment;
 import in.kay.edvora.Views.Fragments.LibraryFragment;
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomBar = findViewById(R.id.bottom_bar);
         SwitchFragement();
-        Typeface typeface = Typeface.createFromAsset(this.getAssets(),"gilroybold.ttf");
+        Typeface typeface = Typeface.createFromAsset(this.getAssets(), "gilroybold.ttf");
         bottomBar.setDefaultTypeface(typeface);
         bottomBar.setMenuItemSelectionListener(new BottomNavigation.OnMenuItemSelectionListener() {
             @Override
@@ -48,17 +46,18 @@ public class MainActivity extends AppCompatActivity {
                         SwitchFragement();
                         break;
                     case 2:
-                        String str=Prefs.getString("userType","student");
+                        String str = Prefs.getString("userType", "student");
                         if (str.equalsIgnoreCase("student"))
                             mFragment = new StudentClassroom();
                         else
-                            mFragment=new FacultyClassroom();
+                            mFragment = new FacultyClassroom();
                         SwitchFragement();
                         break;
                     case 3:
                         mFragment = new ProfileFragment();
                         SwitchFragement();
-                        break; }
+                        break;
+                }
             }
 
             @Override
@@ -116,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
         int pid = android.os.Process.myPid();
         android.os.Process.killProcess(pid);
     }
-
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

@@ -14,7 +14,7 @@
     android:layout_height="match_parent">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circleImageView2"
+        android:id="@+id/circleImageView"
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:layout_marginTop="48dp"
@@ -26,12 +26,13 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
+        android:id="@+id/editPhoto"
         android:layout_width="wrap_content"
         android:elevation="10dp"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_edit_pencil"
-        app:layout_constraintBottom_toBottomOf="@+id/circleImageView2"
-        app:layout_constraintEnd_toEndOf="@+id/circleImageView2" />
+        app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+        app:layout_constraintEnd_toEndOf="@+id/circleImageView" />
 
     <TextView
         android:id="@+id/textView"
@@ -47,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView2"
+        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
@@ -57,11 +58,12 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="24dp"
         android:layout_marginTop="3dp"
+        android:editable="false"
         android:layout_marginEnd="24dp"
         android:background="@drawable/ic_in_active"
         android:drawablePadding="11dp"
         android:fontFamily="@font/gilroymedium"
-        android:inputType="textPersonName"
+        android:inputType="none"
         android:letterSpacing="0.03"
         android:padding="16dp"
         android:text="Kapil Yadav"
@@ -94,6 +96,7 @@
         android:id="@+id/et_college"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:singleLine="true"
         android:layout_gravity="center_vertical"
         android:editable="false"
         android:layout_marginStart="24dp"
@@ -150,11 +153,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView3"
                 android:layout_marginTop="4dp"
+                android:editable="false"
                 android:background="@drawable/ic_in_active"
                 android:fontFamily="@font/gilroymedium"
-                android:inputType="number"
+                android:inputType="none"
                 android:letterSpacing="0.03"
-                android:maxLength="1"
                 android:padding="16dp"
                 android:text="2nd"
                 android:textColor="@color/black"
@@ -184,6 +187,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView4"
                 android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:background="@drawable/ic_in_active"
                 android:editable="false"
                 android:fontFamily="@font/gilroymedium"
@@ -197,5 +203,20 @@
     </LinearLayout>
 
 
+    <TextView
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/gilroybold"
+        android:text="Logout"
+        android:textColor="#999999"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

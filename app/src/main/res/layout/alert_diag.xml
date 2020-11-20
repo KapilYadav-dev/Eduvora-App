@@ -54,7 +54,7 @@
             android:background="@drawable/selector_et"
             android:fontFamily="@font/gilroymedium"
             android:text="No"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:paddingStart="10dp"
             android:textAlignment="center" />
 

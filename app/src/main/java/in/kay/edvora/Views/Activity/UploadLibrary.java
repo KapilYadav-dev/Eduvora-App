@@ -183,7 +183,7 @@ public class UploadLibrary extends AppCompatActivity {
             else
             {
                 CustomToast customToast=new CustomToast();
-                customToast.ShowToast(UploadLibrary.this,"Please use a document <5 MB.\nReduce further to "+Integer.toString((int)(sizeinMb-5))+" MB");
+                customToast.ShowToast(UploadLibrary.this,"Please use a document <10 MB.\nReduce further to "+Integer.toString((int)(sizeinMb-10))+" MB");
             }
         }
     }

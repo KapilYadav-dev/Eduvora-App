@@ -77,15 +77,13 @@ public class AskQuestion extends AppCompatActivity {
         tvQuestion = findViewById(R.id.tvQuestion);
         tvSubject = findViewById(R.id.tvSubject);
         TextWatcherLogic();
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                close.setEnabled(false);
-                onBackPressed();
-            }
+        close.setOnClickListener(view -> {
+            close.setEnabled(false);
+            onBackPressed();
         });
         ask.setOnClickListener(view -> AddQuestion());
-        ivAttach.setOnClickListener(view -> CropImage.activity()
+        ivAttach.setOnClickListener(view ->
+                CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
                 .setOutputCompressQuality(50)

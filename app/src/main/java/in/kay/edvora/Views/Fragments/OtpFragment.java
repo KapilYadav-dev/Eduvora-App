@@ -5,19 +5,18 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.mukesh.OnOtpCompletionListener;
 import com.mukesh.OtpView;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -39,11 +38,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OtpFragment extends Fragment {
     Context context;
-    TextView tvEmail,tvTimer;
+    TextView tvEmail, tvTimer;
     OtpView otpView;
     Button btnNext;
     View view;
-    String value,userType;
+    String value, userType;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -55,32 +55,21 @@ public class OtpFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         value = getArguments().getString("email");
         userType = getArguments().getString("userType");
-        this.view=view;
-        tvEmail=view.findViewById(R.id.tvEmail);
-        tvTimer=view.findViewById(R.id.tv_timer);
+        this.view = view;
+        tvEmail = view.findViewById(R.id.tvEmail);
+        tvTimer = view.findViewById(R.id.tv_timer);
         tvEmail.setText(value);
-        btnNext=view.findViewById(R.id.btn_next);
+        btnNext = view.findViewById(R.id.btn_next);
         btnNext.setTextColor(Color.WHITE);
         otpView = view.findViewById(R.id.otp_view);
-        otpView.setOtpCompletionListener(new OnOtpCompletionListener() {
-            @Override
-            public void onOtpCompleted(final String otp) {
-                btnNext.setBackground(getResources().getDrawable(R.drawable.ic_btn_one));
-                btnNext.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DoWork(otp);
-                    }
-                });
-            }
+        otpView.setOtpCompletionListener(otp -> {
+            btnNext.setBackground(getResources().getDrawable(R.drawable.ic_btn_one));
+            btnNext.setOnClickListener(view1 -> DoWork(otp));
         });
         CountdownLogic();
-        tvTimer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(context,"OTP send successfully...");
-            }
+        tvTimer.setOnClickListener(view12 -> {
+            CustomToast customToast = new CustomToast();
+            customToast.ShowToast(context, "OTP send successfully...");
         });
     }
 
@@ -88,7 +77,7 @@ public class OtpFragment extends Fragment {
         new CountDownTimer(60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                tvTimer.setText("Time remaining: 00:" +millisUntilFinished / 1000);
+                tvTimer.setText("Time remaining: 00:" + millisUntilFinished / 1000);
                 tvTimer.setClickable(false);
             }
 
@@ -101,7 +90,7 @@ public class OtpFragment extends Fragment {
     }
 
     private void DoWork(String otp) {
-        final ProgressDialog pd = new ProgressDialog( context);
+        final ProgressDialog pd = new ProgressDialog(context);
         pd.setMax(100);
         pd.setMessage("Setting you...");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -112,7 +101,7 @@ public class OtpFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<ResponseBody> call = apiInterface.verifyOtp(value,otp);
+        Call<ResponseBody> call = apiInterface.verifyOtp(value, otp);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -120,22 +109,22 @@ public class OtpFragment extends Fragment {
                     if (response.isSuccessful()) {
                         pd.dismiss();
                         Fragment mFragment = null;
-                        String str=response.body().string();
-                        JSONObject jsonObject=new JSONObject(str);
-                        String refreshToken=jsonObject.getString("refreshToken");
-                        String accessToken=jsonObject.getString("accessToken");
-                        Prefs.putBoolean("isLoggedIn",true);
-                        Prefs.putString("userType",userType);
-                        Prefs.putString("userId",jsonObject.getString("userId"));
-                        Prefs.putString("refreshToken",refreshToken);
-                        Prefs.putString("accessToken",accessToken);
-                        if (userType.equalsIgnoreCase("student")) mFragment = new StudentDetailFragment();
+                        String str = response.body().string();
+                        JSONObject jsonObject = new JSONObject(str);
+                        String refreshToken = jsonObject.getString("refreshToken");
+                        String accessToken = jsonObject.getString("accessToken");
+                        Prefs.putBoolean("isLoggedIn", true);
+                        Prefs.putString("userType", userType);
+                        Prefs.putString("userId", jsonObject.getString("userId"));
+                        Prefs.putString("refreshToken", refreshToken);
+                        Prefs.putString("accessToken", accessToken);
+                        if (userType.equalsIgnoreCase("student"))
+                            mFragment = new StudentDetailFragment();
                         else mFragment = new FacultyDetailFragment();
                         FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.container, mFragment).commit();
-                    }
-                    else {
+                    } else {
                         pd.dismiss();
                         Toast.makeText(context, "Error" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     }
