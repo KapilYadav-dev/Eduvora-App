@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
@@ -77,8 +79,8 @@ public class StudentClassroom extends Fragment {
             throw new RuntimeException("Invalid server URL!");
         }
         JitsiMeetUserInfo userInfo=new JitsiMeetUserInfo();
-        userInfo.setDisplayName("Kappu");
-        userInfo.setEmail("infokaydev@gmail.com");
+        userInfo.setDisplayName(Prefs.getString("name","Student"));
+        userInfo.setEmail(Prefs.getString("email","sendmail"));
 
         JitsiMeetConferenceOptions defaultOptions
                 = new JitsiMeetConferenceOptions.Builder()
@@ -90,6 +92,7 @@ public class StudentClassroom extends Fragment {
         JitsiMeetConferenceOptions options
                 = new JitsiMeetConferenceOptions.Builder()
                 .setRoom(string)
+                .setFeatureFlag("meeting-name.enabled",false)
                 .setFeatureFlag("invite.enabled",false)
                 .setFeatureFlag("kick-out.enabled",false)
                 .build();

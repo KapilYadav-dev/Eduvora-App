@@ -158,7 +158,6 @@ public class FacultyDetailFragment extends Fragment {
                             String clgname = object.getString("name");
                             department.add(clgname);
                         }
-                        ArrayList<String> arrayList = new ArrayList<>();
                         DoWorkDept();
                     } else {
                         //Server error Response

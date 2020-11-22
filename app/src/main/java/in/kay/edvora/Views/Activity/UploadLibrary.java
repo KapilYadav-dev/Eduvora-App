@@ -1,5 +1,6 @@
 package in.kay.edvora.Views.Activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,8 +23,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
+import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.Application.MyApplication;
@@ -39,14 +45,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UploadLibrary extends AppCompatActivity {
     private static final int PICK_FILE_REQUEST = 999;
-    TextView tvSem, tvType, tvName;
-    EditText etTitle, etSubject;
+    TextView tvSem, tvType, tvName,etSubject;
+    EditText etTitle;
     ImageView ivSelect;
     RelativeLayout rl;
     Uri uri;
     SpinnerDialog spinnerDialog;
     ArrayList<String> year = new ArrayList<>();
     ArrayList<String> type = new ArrayList<>();
+    ArrayList<String> subject = new ArrayList<>();
     String choosen, imgUrl;
     private StorageReference mStorageRef;
 
@@ -64,6 +71,10 @@ public class UploadLibrary extends AppCompatActivity {
         tvType.setOnClickListener(view -> {
             SelectType();
         });
+        etSubject.setOnClickListener(view -> {
+            SelectSubject();
+        });
+
     }
 
     private void SelectType() {
@@ -89,7 +100,7 @@ public class UploadLibrary extends AppCompatActivity {
         year.add("2nd Year");
         year.add("3rd Year");
         year.add("Final Year");
-        spinnerDialog = new SpinnerDialog(this, year, "Select your year", R.style.DialogAnimations, "");// With 	Animation
+        spinnerDialog = new SpinnerDialog(this, year, "Select  year", R.style.DialogAnimations, "");// With 	Animation
         spinnerDialog.setCancellable(false); // for cancellable
         spinnerDialog.setShowKeyboard(false);// for open keyboard by default
         spinnerDialog.setItemColor(Color.parseColor("#263238"));
@@ -99,6 +110,69 @@ public class UploadLibrary extends AppCompatActivity {
             year.clear();
             tvSem.setText(choosen);
             tvSem.setTextColor(getResources().getColor(R.color.colorBlack));
+        });
+    }
+
+    private void SelectSubject() {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMax(100);
+        pd.setMessage("Loading...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.getSubjects();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        JSONArray jsonArray = new JSONArray(response.body().string());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String name = jsonObject.getString("name");
+                            subject.add(name);
+                        }
+                        DoSelectSubject();
+                        pd.dismiss();
+                    }
+                    else {
+                        pd.dismiss();
+                        CustomToast customToast=new CustomToast();
+                        customToast.ShowToast(getBaseContext(),"Server down...");
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    pd.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                pd.dismiss();
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(getBaseContext(),"Server down...");
+            }
+        });
+    }
+
+    private void DoSelectSubject() {
+        spinnerDialog = new SpinnerDialog(UploadLibrary.this, subject, "Select subject", R.style.DialogAnimations, "");// With 	Animation
+        spinnerDialog.setCancellable(true); // for cancellable
+        spinnerDialog.setShowKeyboard(false);// for open keyboard by default
+        spinnerDialog.setItemColor(Color.parseColor("#263238"));
+        spinnerDialog.showSpinerDialog();
+        spinnerDialog.bindOnSpinerListener((item, position) -> {
+            choosen = item;
+            subject.clear();
+            runOnUiThread(() -> {
+                etSubject.setText(choosen);
+                etSubject.setTextColor(getResources().getColor(R.color.colorBlack));
+            });
         });
     }
 
@@ -178,12 +252,11 @@ public class UploadLibrary extends AppCompatActivity {
             return;
         } else {
             long sizeinMb = getFileSize(uri) / 1024 / 1024;
-            if (sizeinMb<10)
+            if (sizeinMb < 10)
                 UploadImageToDatabase(uri);
-            else
-            {
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(UploadLibrary.this,"Please use a document <10 MB.\nReduce further to "+Integer.toString((int)(sizeinMb-10))+" MB");
+            else {
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(UploadLibrary.this, "Please use a document <10 MB.\nReduce further to " + Integer.toString((int) (sizeinMb - 10)) + " MB");
             }
         }
     }

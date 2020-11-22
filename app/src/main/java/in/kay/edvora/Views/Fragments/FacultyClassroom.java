@@ -62,8 +62,9 @@ public class FacultyClassroom extends Fragment {
             throw new RuntimeException("Invalid server URL!");
         }
         JitsiMeetUserInfo userInfo=new JitsiMeetUserInfo();
-        userInfo.setDisplayName("Teacher");
-        userInfo.setEmail("infokaydev@gmail.com");
+        userInfo.setDisplayName(Prefs.getString("name","Teacher"));
+        userInfo.setEmail(Prefs.getString("email","teacherMail"));
+
 
         JitsiMeetConferenceOptions defaultOptions
                 = new JitsiMeetConferenceOptions.Builder()

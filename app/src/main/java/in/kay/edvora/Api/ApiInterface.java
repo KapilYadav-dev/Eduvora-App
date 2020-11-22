@@ -32,6 +32,8 @@ public interface ApiInterface {
     Call<ResponseBody> getBranches();
     @GET("admin/listdepartments")
     Call<ResponseBody> getDept();
+    @GET("admin/listsubjects")
+    Call<ResponseBody> getSubjects();
     @GET("feed/view")
     Call<List<HomeModel>> getFeed(@Header("Authorization") String header);
     @GET("feed/view/{id}")
