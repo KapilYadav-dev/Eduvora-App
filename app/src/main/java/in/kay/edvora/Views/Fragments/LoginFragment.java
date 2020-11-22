@@ -66,12 +66,9 @@ public class LoginFragment extends Fragment {
         btnLogin=view.findViewById(R.id.btn_login);
         IvSignUpLogic();
         ShowPasswordLogic();
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnLogin.startAnimation();
-                DoWork();
-            }
+        btnLogin.setOnClickListener(view -> {
+            btnLogin.startAnimation();
+            DoWork();
         });
     }
 
@@ -96,6 +93,8 @@ public class LoginFragment extends Fragment {
                            Prefs.putString("userType",jsonObject.getString("type"));
                            Prefs.putString("accessToken",jsonObject.getString("accessToken"));
                            Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
+                           Prefs.putString("name",jsonObject.getString("name"));
+                           Prefs.putString("email",jsonObject.getString("email"));
                            Prefs.putString("userId",jsonObject.getString("userId"));
                            Prefs.putBoolean("isLoggedIn",true);
                            Prefs.putBoolean("isProfileComplete",true);
@@ -107,6 +106,8 @@ public class LoginFragment extends Fragment {
                            Prefs.putString("userType",jsonObject.getString("type"));
                            Prefs.putString("accessToken",jsonObject.getString("accessToken"));
                            Prefs.putString("refreshToken",jsonObject.getString("refreshToken"));
+                           Prefs.putString("name",jsonObject.getString("name"));
+                           Prefs.putString("email",jsonObject.getString("email"));
                            CustomToast customToast=new CustomToast();
                            customToast.ShowToast(context,"Please complete your profile first..");
                            Fragment mFragment = null;

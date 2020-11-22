@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
 import java.io.IOException;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
@@ -136,16 +138,13 @@ public class SignupFragment extends Fragment {
                 tvDone.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         });
-        tvDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!TextUtils.isEmpty(userType)) {
-                    dialog.dismiss();
-                    DoWork();
-                } else {
-                    CustomToast customToast=new CustomToast();
-                    customToast.ShowToast(context,"Please choose at-least one user");
-                }
+        tvDone.setOnClickListener(view -> {
+            if (!TextUtils.isEmpty(userType)) {
+                dialog.dismiss();
+                DoWork();
+            } else {
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Please choose at-least one user");
             }
         });
     }
@@ -173,47 +172,44 @@ public class SignupFragment extends Fragment {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    if (response.isSuccessful()) {
-                       btnSignUp.revertAnimation();
-                        Fragment mFragment = null;
-                        mFragment = new OtpFragment();
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Bundle args = new Bundle();
-                        args.putString("email", etEmail.getText().toString());
-                        args.putString("userType", userType);
-                        mFragment.setArguments(args);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.container, mFragment).commit();
+                if (response.isSuccessful()) {
+                   btnSignUp.revertAnimation();
+                    Fragment mFragment = null;
+                    mFragment = new OtpFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    Bundle args = new Bundle();
+                    args.putString("email", etEmail.getText().toString());
+                    args.putString("userType", userType);
+                    Prefs.putString("name",etName.getText().toString());
+                    Prefs.putString("email",etEmail.getText().toString());
+                    mFragment.setArguments(args);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, mFragment).commit();
 
-                    }
-                    else {
-                        btnSignUp.revertAnimation();
-                        Toast.makeText(context, "Success" + response.errorBody().string(), Toast.LENGTH_SHORT).show();
-                    }
-                } catch (IOException e) {
+                }
+                else {
                     btnSignUp.revertAnimation();
+                    CustomToast customToast=new CustomToast();
+                    customToast.ShowToast(context,"Error Occurred...");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 btnSignUp.revertAnimation();
-                Toast.makeText(context, "Exception error " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Failure Occurred...");
             }
         });
     }
 
     private void IvLoginLogic() {
-        ivLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment mFragment = null;
-                mFragment = new LoginFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, mFragment).commit();
-            }
+        ivLogin.setOnClickListener(view -> {
+            Fragment mFragment = null;
+            mFragment = new LoginFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, mFragment).commit();
         });
     }
 

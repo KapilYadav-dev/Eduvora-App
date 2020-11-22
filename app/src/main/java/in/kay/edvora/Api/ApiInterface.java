@@ -14,7 +14,6 @@ import retrofit2.http.Path;
 
 public interface ApiInterface {
     String BASE_URL = "https://edvora.herokuapp.com/";
-
     @FormUrlEncoded
     @POST("auth/login")
     Call<ResponseBody> loginUser(@Field("email") String email, @Field("password") String password);
@@ -50,5 +49,4 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("library/add")
     Call<ResponseBody> uploadFile(@Field("title") String title,@Field("year") String year,@Field("subject") String subject,@Field("type") String type,@Field("url") String url);
-
 }

@@ -74,7 +74,6 @@ public class FacultyClassroom extends Fragment {
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
         JitsiMeetConferenceOptions options
                 = new JitsiMeetConferenceOptions.Builder()
-                .setFeatureFlag("toggleLobby",true)
                 .setFeatureFlag("meeting-name.enabled",false)
                 .setRoom(string)
                 .build();

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,9 +64,34 @@ public class OtpFragment extends Fragment {
         btnNext = view.findViewById(R.id.btn_next);
         btnNext.setTextColor(Color.WHITE);
         otpView = view.findViewById(R.id.otp_view);
+        otpView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Integer length=otpView.length();
+                if (length>=4)
+                {
+                    btnNext.setBackground(getResources().getDrawable(R.drawable.ic_btn_one));
+                    btnNext.setClickable(true);
+                }
+                else {
+                    btnNext.setBackground(getResources().getDrawable(R.drawable.ic_in_active));
+                    btnNext.setClickable(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         otpView.setOtpCompletionListener(otp -> {
-            btnNext.setBackground(getResources().getDrawable(R.drawable.ic_btn_one));
-            btnNext.setOnClickListener(view1 -> DoWork(otp));
+            btnNext.setOnClickListener(view1 ->DoWork(otp));
         });
         CountdownLogic();
         tvTimer.setOnClickListener(view12 -> {

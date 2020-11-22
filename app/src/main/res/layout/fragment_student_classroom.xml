@@ -17,7 +17,8 @@
             android:id="@+id/imageView7"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:src="@drawable/ic_ill_meet"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/ic_student_ill"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
+            android:layout_marginTop="80dp"
             android:layout_marginEnd="48dp"
             android:src="@drawable/ic_join_class_meeting"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:fontFamily="@font/gilroymedium"
             android:text="Join class"
             android:textColor="@color/black"
@@ -54,7 +56,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
             android:background="@drawable/selector_et"
             android:drawablePadding="11dp"
             android:fontFamily="@font/gilroymedium"
@@ -64,11 +65,9 @@
             android:padding="16dp"
             android:textColor="#000"
             android:textSize="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_join"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <Button
             android:id="@+id/btn_join"
@@ -87,7 +86,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_email" />
+            app:layout_constraintTop_toBottomOf="@+id/et_meet_code" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

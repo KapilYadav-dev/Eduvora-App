@@ -57,6 +57,11 @@ public class StudentClassroom extends Fragment {
                meetCode.requestFocus();
                return;
            }
+           else if (meetCode.getText().toString().length()<=10){
+               meetCode.setError("Please enter valid enter code (Code must be greater than 10 digits)");
+               meetCode.requestFocus();
+               return;
+           }
            else {
                StartMeet(meetCode.getText().toString().trim());
            }
