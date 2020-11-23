@@ -1,43 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Views.Activity.LibraryContent">
 
+
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentInsetStart="0dp"
+        android:elevation="10dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:onClick="OnBack"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back_white"
+                android:layout_centerVertical="true"/>
+            <TextView
+                android:id="@+id/subjectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/back"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:fontFamily="@font/gilroymedium"
+                android:layout_marginHorizontal="10dp"
+                android:textColor="#80292929"
+                android:textSize="16dp"
+                android:layout_centerVertical="true"
+                android:text="Subject"/>
+        </RelativeLayout>
+    </Toolbar>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
         android:elevation="10dp"
-        android:layout_height="60dp"
         app:tabIndicatorColor="@color/colorAccent"
-        app:tabTextColor="#999999"
-        app:tabTextAppearance="@style/tab_style"
+        app:tabIndicatorFullWidth="false"
+        android:scrollIndicators="left"
         app:tabSelectedTextColor="@color/colorAccent"
-        android:background="@color/white">
+        app:tabTextAppearance="@style/tab_style"
+        app:tabTextColor="#757575">
+
         <com.google.android.material.tabs.TabItem
             android:id="@+id/books"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Books"/>
+            android:text="Books" />
+
         <com.google.android.material.tabs.TabItem
             android:id="@+id/notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notes"/>
+            android:text="Notes" />
+
         <com.google.android.material.tabs.TabItem
             android:id="@+id/papers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Papers"/>
+            android:text="Papers" />
     </com.google.android.material.tabs.TabLayout>
-    
+
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/viewPager"/>
+        android:layout_height="match_parent" />
 </LinearLayout>

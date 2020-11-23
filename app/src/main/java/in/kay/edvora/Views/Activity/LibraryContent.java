@@ -1,6 +1,8 @@
 package in.kay.edvora.Views.Activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -16,15 +18,19 @@ public class LibraryContent extends AppCompatActivity {
     ViewPager viewPager;
     TabAdapter tabAdapter;
     TabItem tabBooks, tabNotes, tabPapers;
-
+    String string;
+    TextView subjectName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library_content);
+        string=getIntent().getStringExtra("Subject");
         initz();
     }
 
     private void initz() {
+        subjectName = findViewById(R.id.subjectName);
+        subjectName.setText(string);
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         tabBooks = findViewById(R.id.books);
@@ -52,5 +58,9 @@ public class LibraryContent extends AppCompatActivity {
             }
         });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+    }
+
+    public void OnBack(View view) {
+        onBackPressed();
     }
 }

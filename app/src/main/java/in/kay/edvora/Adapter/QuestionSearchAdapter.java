@@ -42,7 +42,9 @@ public class QuestionSearchAdapter extends RecyclerView.Adapter<QuestionSearchAd
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.tvName.setText(list.get(position).getName());
         holder.itemView.setOnClickListener(view -> {
-            context.startActivity(new Intent(context, LibraryContent.class));
+            Intent intent=new Intent(context,LibraryContent.class);
+            intent.putExtra("Subject",list.get(position).getName());
+            context.startActivity(intent);
         });
     }
 
