@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/swipe"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@+id/swipe"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -11,11 +11,50 @@
         android:animateLayoutChanges="true"
         android:background="@color/homeback"
         tools:context=".Views.Fragments.HomeFragment">
+        <Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:contentInsetStart="0dp"
+            android:elevation="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@+id/iv"
+                    android:fontFamily="@font/gilroyblack"
+                    android:text="Ed"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="26dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textStyle="bold"
+                    android:layout_toRightOf="@+id/tv"
+                    android:fontFamily="@font/gilroyblack"
+                    android:text="vora"
+                    android:textColor="#9A000000"
+                    android:textSize="26dp" />
+            </RelativeLayout>
+        </Toolbar>
         <!-- ListView、ScrollView、RecyclerView、Other -->
         <com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:shimmer="http://schemas.android.com/tools"
             android:id="@+id/shimmerFrameLayout"
+            android:layout_marginTop="56dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layerType="software"
@@ -35,6 +74,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
+            android:layout_marginTop="56dp"
             android:layout_height="match_parent"
             android:visibility="gone" />
 

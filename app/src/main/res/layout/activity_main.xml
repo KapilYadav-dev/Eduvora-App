@@ -7,51 +7,11 @@
     android:background="@color/homeback"
     tools:context=".Views.Activity.MainActivity">
 
-    <Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/white"
-        android:contentInsetStart="0dp"
-        android:elevation="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:textStyle="bold"
-                android:layout_marginLeft="8dp"
-                android:layout_toRightOf="@+id/iv"
-                android:fontFamily="@font/gilroyblack"
-                android:text="Ed"
-                android:textColor="@color/colorPrimary"
-                android:textSize="26dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:textStyle="bold"
-                android:layout_toRightOf="@+id/tv"
-                android:fontFamily="@font/gilroyblack"
-                android:text="vora"
-                android:textColor="#9A000000"
-                android:textSize="26dp" />
-        </RelativeLayout>
-    </Toolbar>
 
     <FrameLayout
         android:id="@id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
