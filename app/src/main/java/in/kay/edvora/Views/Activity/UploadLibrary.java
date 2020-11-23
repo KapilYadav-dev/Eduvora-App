@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -78,10 +79,9 @@ public class UploadLibrary extends AppCompatActivity {
     }
 
     private void SelectType() {
+        type.add("Books");
         type.add("Notes");
-        type.add("Paper");
-        type.add("Lectures");
-        type.add("Comic");
+        type.add("Papers");
         spinnerDialog = new SpinnerDialog(this, type, "Select doc type", R.style.DialogAnimations, "");// With 	Animation
         spinnerDialog.setCancellable(false); // for cancellable
         spinnerDialog.setShowKeyboard(false);// for open keyboard by default
@@ -284,6 +284,7 @@ public class UploadLibrary extends AppCompatActivity {
                 DoWork(imgUrl, pd);
             });
         }).addOnFailureListener(e -> {
+            pd.dismiss();
             CustomToast customToast = new CustomToast();
             customToast.ShowToast(UploadLibrary.this, "Unable to upload image " + e.getLocalizedMessage());
         });
@@ -301,10 +302,11 @@ public class UploadLibrary extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<ResponseBody> call = apiInterface.uploadFile(title, strYear, subject, doctype, imgUrl);
+        Call<ResponseBody> call = apiInterface.uploadFile(title, strYear, subject, doctype, imgUrl,"Bearer "+Prefs.getString("accessToken",""));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d("MYTAG", "onResponse: "+response.code());
                 if (response.isSuccessful()) {
                     pd.dismiss();
                     CustomToast customToast = new CustomToast();

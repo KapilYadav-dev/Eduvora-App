@@ -2,9 +2,12 @@ package in.kay.edvora.Api;
 
 import java.util.List;
 
+import in.kay.edvora.Models.FindLibraryBody;
+import in.kay.edvora.Models.FindLibraryModel;
 import in.kay.edvora.Models.HomeModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -50,5 +53,9 @@ public interface ApiInterface {
     Call<ResponseBody> sendAnswer(@Field("questionId") String questionId, @Field("answer") String answer, @Header("Authorization") String header);
     @FormUrlEncoded
     @POST("library/add")
-    Call<ResponseBody> uploadFile(@Field("title") String title,@Field("year") String year,@Field("subject") String subject,@Field("type") String type,@Field("url") String url);
+    Call<ResponseBody> uploadFile(@Field("title") String title,@Field("year") String year,@Field("subject") String subject,@Field("type") String type,@Field("url") String url,@Header("Authorization") String header);
+    @POST("library/search")
+    Call<List<FindLibraryModel>> searchLibrary(@Body FindLibraryBody findLibraryBody);
+    @GET("library/viewall")
+    Call<List<FindLibraryModel>> viewAllLibrary();
 }
