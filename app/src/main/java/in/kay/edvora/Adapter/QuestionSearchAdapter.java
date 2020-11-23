@@ -1,6 +1,7 @@
 package in.kay.edvora.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import in.kay.edvora.Models.QuestionsModel;
 import in.kay.edvora.R;
+import in.kay.edvora.Views.Activity.LibraryContent;
 
 public class QuestionSearchAdapter extends RecyclerView.Adapter<QuestionSearchAdapter.ViewHolder> implements Filterable {
     List<QuestionsModel> list;
@@ -40,6 +42,7 @@ public class QuestionSearchAdapter extends RecyclerView.Adapter<QuestionSearchAd
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.tvName.setText(list.get(position).getName());
         holder.itemView.setOnClickListener(view -> {
+            context.startActivity(new Intent(context, LibraryContent.class));
         });
     }
 

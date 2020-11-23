@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".Views.Activity.LibraryContent">
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:elevation="10dp"
+        android:layout_height="60dp"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabTextColor="#999999"
+        app:tabTextAppearance="@style/tab_style"
+        app:tabSelectedTextColor="@color/colorAccent"
+        android:background="@color/white">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/books"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Books"/>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notes"/>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/papers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Papers"/>
+    </com.google.android.material.tabs.TabLayout>
+    
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/viewPager"/>
+</LinearLayout>

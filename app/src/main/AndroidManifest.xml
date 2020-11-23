@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
-        <activity android:name=".Views.Activity.ChatActivity"/>
+        <activity android:name=".Views.Activity.LibraryContent"></activity>
+        <activity android:name=".Views.Activity.ChatActivity" />
         <activity android:name=".Views.Activity.UploadLibrary" />
         <activity android:name=".Views.Activity.Profile" />
         <activity android:name=".Views.Activity.AnswerActivity">
