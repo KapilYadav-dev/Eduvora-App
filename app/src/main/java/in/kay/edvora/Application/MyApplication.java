@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
+import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        PDFBoxResourceLoader.init(getApplicationContext());
         OfflineImageCache();
         EasyPrefInitz();
     }

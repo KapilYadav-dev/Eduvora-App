@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import in.kay.edvora.Adapter.TabAdapter;
 import in.kay.edvora.R;
@@ -25,6 +26,7 @@ public class LibraryContent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library_content);
         string=getIntent().getStringExtra("Subject");
+        Prefs.putString("subject",string);
         initz();
     }
 
