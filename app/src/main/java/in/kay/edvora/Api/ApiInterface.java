@@ -6,6 +6,7 @@ import in.kay.edvora.Models.FindLibraryModel;
 import in.kay.edvora.Models.HomeModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -70,4 +71,20 @@ public interface ApiInterface {
 
     @GET("library/viewall")
     Call<List<FindLibraryModel>> viewAllLibrary();
+
+    @FormUrlEncoded
+    @POST("library/bookmarknote")
+    Call<ResponseBody> bookMarkContent(@Field("noteId") String noteId, @Header("Authorization") String header);
+
+
+    @GET("library/viewsubjects")
+    Call<List<String>> viewMySubjects(@Header("Authorization") String header);
+
+    @FormUrlEncoded
+    @POST("library/bookmarksubject")
+    Call<ResponseBody> addSubject(@Field("subject") String subject, @Header("Authorization") String header);
+
+    @FormUrlEncoded
+    @DELETE("library/deletesubject")
+    Call<ResponseBody> deleteSubject(@Field("subject") String subject, @Header("Authorization") String header);
 }

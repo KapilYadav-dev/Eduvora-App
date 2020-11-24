@@ -178,7 +178,7 @@ public class UploadLibrary extends AppCompatActivity {
 
     private void SelectFile() {
         Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        String[] mimeTypes = {"text/csv", "application/pdf", "application/msword", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+        String[] mimeTypes = {"text/csv", "application/pdf", "application/msword", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.openxmlformats-officedocument.presentationml.presentation"};
         chooseIntent.setType("*/*");
         chooseIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(chooseIntent, PICK_FILE_REQUEST);
