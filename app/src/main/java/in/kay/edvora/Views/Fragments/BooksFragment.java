@@ -60,6 +60,10 @@ public class BooksFragment extends Fragment {
             List<FindLibraryModel> finalList = Stream.of(filteredList).filter(item -> item.getType().equalsIgnoreCase("Books")).collect(Collectors.toList());
             findLibraryAdapter = new FindLibraryAdapter(finalList, context);
             recyclerView.setAdapter(findLibraryAdapter);
+            if (findLibraryAdapter.getItemCount() == 0)
+                view.findViewById(R.id.noContentFound).setVisibility(View.VISIBLE);
+            else
+                view.findViewById(R.id.noContentFound).setVisibility(View.GONE);
         });
     }
 

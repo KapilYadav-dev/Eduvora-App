@@ -21,6 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +46,8 @@ import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.Models.QuestionsModel;
 import in.kay.edvora.R;
 import in.kay.edvora.Utils.CustomToast;
+import in.kay.edvora.ViewModel.HomeViewModel;
+import in.kay.edvora.ViewModel.MySubjectsViewModel;
 import in.kay.edvora.Views.Activity.UploadLibrary;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,6 +63,7 @@ public class LibraryFragment extends Fragment {
     View view;
     ImageView search;
     ImageView fab, addSubject;
+    MySubjectsViewModel mySubjectsViewModel;
     Toolbar toolbar;
     Dialog dialog;
     QuestionSearchAdapter questionSearchAdapter;
@@ -84,6 +90,7 @@ public class LibraryFragment extends Fragment {
         addSubject = view.findViewById(R.id.iv_add_subject);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mySubjectsViewModel = ViewModelProviders.of((FragmentActivity) context).get(MySubjectsViewModel.class);
         GetSubjects();
         fab = view.findViewById(R.id.fab);
         search = view.findViewById(R.id.search);
@@ -133,43 +140,24 @@ public class LibraryFragment extends Fragment {
         });
     }
 
+    private void CheckSubjects() {
+        if (mySubjetsAdapter.getItemCount()==0)
+        {
+            view.findViewById(R.id.tvNoSubject).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.recyclerView).setVisibility(View.GONE);
+        }
+        else {
+            view.findViewById(R.id.tvNoSubject).setVisibility(View.GONE);
+            view.findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+        }
+    }
+
     private void GetSubjects() {
-        final ProgressDialog pd = new ProgressDialog(context);
-        pd.setMax(100);
-        pd.setMessage("Loading...");
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.show();
-        pd.setCancelable(false);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiInterface.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<List<String>> call = apiInterface.viewMySubjects("Bearer " + Prefs.getString("accessToken", ""));
-        call.enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                if (response.isSuccessful()) {
-                    pd.dismiss();
-                    mySubjetsAdapter = new MySubjetsAdapter(response.body(), context);
-                    recyclerView.setAdapter(mySubjetsAdapter);
-                } else if (response.code() == 502) {
-                    MyApplication myApplication = new MyApplication();
-                    myApplication.RefreshToken(Prefs.getString("refreshToken", ""), context);
-                    GetSubjects();
-                } else {
-                    pd.dismiss();
-                    CustomToast customToast = new CustomToast();
-                    customToast.ShowToast(context, "Error occured...");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                CustomToast customToast = new CustomToast();
-                customToast.ShowToast(context, "Server down...");
-            }
+        mySubjectsViewModel.GetData(context).observe(getViewLifecycleOwner(), list -> {
+            mySubjetsAdapter = new MySubjetsAdapter(list,context);
+            recyclerView.setAdapter(mySubjetsAdapter);
+            mySubjetsAdapter.notifyDataSetChanged();
+            CheckSubjects();
         });
     }
 
@@ -252,7 +240,8 @@ public class LibraryFragment extends Fragment {
                 if (response.isSuccessful()) {
                     pd.dismiss();
                     CustomToast customToast = new CustomToast();
-                    customToast.ShowToast(context, "Added Subject Successfully");
+                    customToast.ShowToast(context, "Added Subject Successfully, New subject will shown after restart...");
+                    mySubjetsAdapter.notifyDataSetChanged();
                 } else if (response.code() == 502) {
                     MyApplication myApplication = new MyApplication();
                     myApplication.RefreshToken(Prefs.getString("refreshToken", ""), context);
@@ -260,7 +249,7 @@ public class LibraryFragment extends Fragment {
                 } else {
                     pd.dismiss();
                     CustomToast customToast = new CustomToast();
-                    customToast.ShowToast(context, "Subject already added...");
+                    customToast.ShowToast(context, "Subject already added !");
                 }
             }
 

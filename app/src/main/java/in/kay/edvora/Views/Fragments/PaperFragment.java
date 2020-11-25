@@ -31,16 +31,17 @@ public class PaperFragment extends Fragment {
     RecyclerView recyclerView;
     FindLibraryAdapter findLibraryAdapter;
     LibraryViewModel libraryViewModel;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context=context;
+        this.context = context;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.view=view;
+        this.view = view;
         Initz();
     }
 
@@ -53,10 +54,14 @@ public class PaperFragment extends Fragment {
 
     private void DoWork() {
         libraryViewModel.GetData(context).observe(getViewLifecycleOwner(), findLibraryModels -> {
-            List<FindLibraryModel> filteredList = Stream.of(findLibraryModels).filter(item -> item.getSubject().equalsIgnoreCase( Prefs.getString("subject",""))).collect(Collectors.toList());
+            List<FindLibraryModel> filteredList = Stream.of(findLibraryModels).filter(item -> item.getSubject().equalsIgnoreCase(Prefs.getString("subject", ""))).collect(Collectors.toList());
             List<FindLibraryModel> finalList = Stream.of(filteredList).filter(item -> item.getType().equalsIgnoreCase("Papers")).collect(Collectors.toList());
             findLibraryAdapter = new FindLibraryAdapter(finalList, context);
             recyclerView.setAdapter(findLibraryAdapter);
+            if (findLibraryAdapter.getItemCount() == 0)
+                view.findViewById(R.id.noContentFound).setVisibility(View.VISIBLE);
+            else
+                view.findViewById(R.id.noContentFound).setVisibility(View.GONE);
         });
     }
 

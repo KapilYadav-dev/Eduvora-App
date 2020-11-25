@@ -4,8 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Views.Fragments.PaperFragment">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/noContentFound"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_info" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:fontFamily="@font/sans_bold"
+                android:text="No Paper's Found!"
+                android:textColor="#808080"
+                android:textSize="16dp" />
+        </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>
