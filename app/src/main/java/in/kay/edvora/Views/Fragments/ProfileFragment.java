@@ -1,5 +1,6 @@
 package in.kay.edvora.Views.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,11 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.github.thunder413.datetimeutils.DateTimeUnits;
+import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
@@ -27,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import in.kay.edvora.Api.ApiInterface;
@@ -51,6 +58,7 @@ public class ProfileFragment extends Fragment {
     ShimmerTextView etName, etBranch, etYear, etClg;
     Shimmer shimmer1, shimmer2, shimmer3, shimmer4;
     ImageView etPhotoEdit;
+    StorageReference mStorageRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +75,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void Initz() {
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         circleImageView = view.findViewById(R.id.circleImageView);
         etPhotoEdit = view.findViewById(R.id.editPhoto);
         etName = view.findViewById(R.id.et_name);
@@ -84,7 +93,20 @@ public class ProfileFragment extends Fragment {
         shimmer4.start(etYear);
         FetchValue();
         etPhotoEdit.setOnClickListener(view -> {
-            ChoosePhoto();
+            Integer difference;
+            Long date = Prefs.getLong("updatedImageDate", 0);
+            if (date != null) {
+                difference = GetDateDiff(new Date(date));
+            } else
+                difference = null;
+
+            Toast.makeText(context, "duff is"+difference, Toast.LENGTH_SHORT).show();
+            if (difference == null || difference > 7)
+                ChoosePhoto();
+            else {
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(context, "You can change your profile photo after "+Integer.toString(7-difference)+" days...");
+            }
         });
         logout.setOnClickListener(view -> {
             Logout();
@@ -183,6 +205,7 @@ public class ProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 Picasso.get().load(resultUri).into(circleImageView);
+                UploadImageToDatabase(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 CustomToast customToast = new CustomToast();
@@ -191,5 +214,70 @@ public class ProfileFragment extends Fragment {
 
             }
         }
+    }
+
+    private void UploadImageToDatabase(Uri uri) {
+        final ProgressDialog pd = new ProgressDialog(context);
+        pd.setMax(100);
+        pd.setMessage("Uploading image...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        final StorageReference ImageName = mStorageRef.child("PostImages").child("img_" + uri.getLastPathSegment());
+        ImageName.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+            ImageName.getDownloadUrl().addOnSuccessListener(uri1 -> {
+                String imgUrl = String.valueOf(uri1);
+                UploadDatatoServer(imgUrl, pd);
+            });
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            CustomToast customToast = new CustomToast();
+            customToast.ShowToast(context, "Error while uploading image to server..." + e.getLocalizedMessage());
+        });
+
+    }
+
+    public int GetDateDiff(Date date) {
+        Date currentDate = new Date();
+        Date postDate = date;
+        int diff = DateTimeUtils.getDateDiff(currentDate, postDate, DateTimeUnits.DAYS);
+        return diff;
+    }
+
+
+    private void UploadDatatoServer(String imgUrl, ProgressDialog pd) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.updateProfileImage(imgUrl, "Bearer " + Prefs.getString("accessToken", ""));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    pd.dismiss();
+                    CustomToast customToast = new CustomToast();
+                    customToast.ShowToast(context, "Your profile image has been updated successfully...");
+                    Date date = new Date();
+                    Prefs.putLong("updatedImageDate", date.getTime());
+                } else if (response.code() == 502) {
+                    MyApplication myApplication = new MyApplication();
+                    myApplication.RefreshToken(Prefs.getString("refreshToken", ""), context);
+                    UploadDatatoServer(imgUrl, pd);
+                } else {
+                    pd.dismiss();
+                    CustomToast customToast = new CustomToast();
+                    customToast.ShowToast(context, "Error occurred...");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                pd.dismiss();
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(context, "Failure occured " + t.getLocalizedMessage());
+            }
+        });
     }
 }

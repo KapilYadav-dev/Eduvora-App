@@ -273,18 +273,12 @@ public class AskQuestion extends AppCompatActivity {
         pd.show();
         pd.setCancelable(false);
         final StorageReference ImageName = mStorageRef.child("PostImages").child("img_" + uri.getLastPathSegment());
-        ImageName.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                pd.dismiss();
-                ImageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        imgUrl = String.valueOf(uri);
-                        UploadDatatoServer(imgUrl);
-                    }
-                });
-            }
+        ImageName.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+            pd.dismiss();
+            ImageName.getDownloadUrl().addOnSuccessListener(uri1 -> {
+                imgUrl = String.valueOf(uri1);
+                UploadDatatoServer(imgUrl);
+            });
         }).addOnFailureListener(e -> pd.dismiss());
         return imgUrl;
     }

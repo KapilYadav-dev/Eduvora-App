@@ -30,6 +30,10 @@ public interface ApiInterface {
     Call<ResponseBody> updateUser(@Field("college") String college, @Field("branch") String branch, @Field("year") int year, @Header("Authorization") String header);
 
     @FormUrlEncoded
+    @POST("profile/update")
+    Call<ResponseBody> updateProfileImage(@Field("imageUrl") String imageUrl, @Header("Authorization") String header);
+
+    @FormUrlEncoded
     @POST("auth/verifyotp")
     Call<ResponseBody> verifyOtp(@Field("email") String email, @Field("otp") String otp);
 
