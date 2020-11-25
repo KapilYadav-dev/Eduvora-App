@@ -8,18 +8,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -30,6 +26,9 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.Application.MyApplication;
@@ -84,10 +83,10 @@ public class AskQuestion extends AppCompatActivity {
         ask.setOnClickListener(view -> AddQuestion());
         ivAttach.setOnClickListener(view ->
                 CropImage.activity()
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
-                .setOutputCompressQuality(50)
-                .start(AskQuestion.this));
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
+                        .setOutputCompressQuality(50)
+                        .start(AskQuestion.this));
     }
 
     private void AddQuestion() {
@@ -98,61 +97,84 @@ public class AskQuestion extends AppCompatActivity {
             etQuestion.setError("Please enter a question to continue.");
             etQuestion.requestFocus();
         } else {
-            if (imgUri != null) {
-                imgUrl = UploadImageToDatabase(imgUri);
+            List<String> words = Arrays.asList(this.getResources().getStringArray(R.array.censored));
+            if (GetCensored(words, etQuestion.getText().toString())) {
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(AskQuestion.this, "Censored Words are not allowed...");
             } else {
-                imgUrl = null;
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(ApiInterface.BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-                ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-                Call<ResponseBody> call = apiInterface.askQuestion(question, topic, imgUrl, subject, "Bearer " + Prefs.getString("accessToken", ""));
-                final ProgressDialog pd = new ProgressDialog(this);
-                pd.setMax(100);
-                pd.setMessage("Adding question...");
-                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pd.show();
-                pd.setCancelable(false);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            pd.dismiss();
-                            CustomToast customToast = new CustomToast();
-                            customToast.ShowToast(AskQuestion.this, "Your question has been added successfully.");
-                            GoBack();
-                        } else if (response.code() == 502) {
-                            MyApplication myApplication = new MyApplication();
-                            myApplication.RefreshToken(Prefs.getString("refreshToken", ""), AskQuestion.this);
-                            AddQuestion();
-                        } else {
-                            try {
-                                pd.dismiss();
-                                String error = response.errorBody().string();
-                                CustomToast customToast = new CustomToast();
-                                customToast.ShowToast(AskQuestion.this, "Response error " + error);
-                            } catch (IOException e) {
-                                pd.dismiss();
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        pd.dismiss();
-                        CustomToast customToast = new CustomToast();
-                        customToast.ShowToast(AskQuestion.this, "Retrpfot error " + t.getLocalizedMessage());
-                    }
-                });
+                OtherLogic(question, topic, subject);
             }
-
         }
 
+    }
 
+    private boolean GetCensored(List<String> words, String strans) {
+        String string;
+        boolean isCensored = false;
+        for (String word : words) {
+            Pattern rx = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
+            strans = rx.matcher(strans).replaceAll(new String(new char[word.length()]).replace('\0', '*'));
+            string = strans;
+            if (string.contains("*"))
+                isCensored = true;
+            else
+                isCensored = false;
+        }
+        return isCensored;
+    }
+
+    private void OtherLogic(String question, String topic, String subject) {
+        if (imgUri != null) {
+            imgUrl = UploadImageToDatabase(imgUri);
+        } else {
+            imgUrl = null;
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(ApiInterface.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+            Call<ResponseBody> call = apiInterface.askQuestion(question, topic, imgUrl, subject, "Bearer " + Prefs.getString("accessToken", ""));
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMax(100);
+            pd.setMessage("Adding question...");
+            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pd.show();
+            pd.setCancelable(false);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        pd.dismiss();
+                        CustomToast customToast = new CustomToast();
+                        customToast.ShowToast(AskQuestion.this, "Your question has been added successfully.");
+                        GoBack();
+                    } else if (response.code() == 502) {
+                        MyApplication myApplication = new MyApplication();
+                        myApplication.RefreshToken(Prefs.getString("refreshToken", ""), AskQuestion.this);
+                        AddQuestion();
+                    } else {
+                        try {
+                            pd.dismiss();
+                            String error = response.errorBody().string();
+                            CustomToast customToast = new CustomToast();
+                            customToast.ShowToast(AskQuestion.this, "Response error " + error);
+                        } catch (IOException e) {
+                            pd.dismiss();
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    pd.dismiss();
+                    CustomToast customToast = new CustomToast();
+                    customToast.ShowToast(AskQuestion.this, "Retrpfot error " + t.getLocalizedMessage());
+                }
+            });
+        }
     }
 
     private void TextWatcherLogic() {

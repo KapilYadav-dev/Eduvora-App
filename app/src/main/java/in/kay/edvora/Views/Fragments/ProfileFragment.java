@@ -1,27 +1,24 @@
 package in.kay.edvora.Views.Fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.pixplicity.easyprefs.library.Prefs;
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -36,9 +33,7 @@ import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.R;
 import in.kay.edvora.Utils.CustomToast;
-import in.kay.edvora.Views.Activity.AskQuestion;
 import in.kay.edvora.Views.Activity.Landing;
-import in.kay.edvora.Views.Activity.Profile;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,8 +48,10 @@ public class ProfileFragment extends Fragment {
     View view;
     CircleImageView circleImageView;
     TextView logout;
-    EditText etName,etBranch,etYear,etClg;
+    ShimmerTextView etName, etBranch, etYear, etClg;
+    Shimmer shimmer1, shimmer2, shimmer3, shimmer4;
     ImageView etPhotoEdit;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,18 +62,26 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.view=view;
+        this.view = view;
         Initz();
     }
 
     private void Initz() {
-        circleImageView=view.findViewById(R.id.circleImageView);
-        etPhotoEdit=view.findViewById(R.id.editPhoto);
-        etName=view.findViewById(R.id.et_name);
-        logout=view.findViewById(R.id.logout);
-        etBranch=view.findViewById(R.id.et_branch);
-        etYear=view.findViewById(R.id.et_year);
-        etClg=view.findViewById(R.id.et_college);
+        circleImageView = view.findViewById(R.id.circleImageView);
+        etPhotoEdit = view.findViewById(R.id.editPhoto);
+        etName = view.findViewById(R.id.et_name);
+        logout = view.findViewById(R.id.logout);
+        etBranch = view.findViewById(R.id.et_branch);
+        etYear = view.findViewById(R.id.et_year);
+        etClg = view.findViewById(R.id.et_college);
+        shimmer1 = new Shimmer();
+        shimmer1.start(etName);
+        shimmer2 = new Shimmer();
+        shimmer2.start(etBranch);
+        shimmer3 = new Shimmer();
+        shimmer3.start(etClg);
+        shimmer4 = new Shimmer();
+        shimmer4.start(etYear);
         FetchValue();
         etPhotoEdit.setOnClickListener(view -> {
             ChoosePhoto();
@@ -102,25 +107,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private void FetchValue() {
-        final ProgressDialog pd = new ProgressDialog(context);
-        pd.setMax(100);
-        pd.setMessage("Loading...");
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.show();
-        pd.setCancelable(false);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         ApiInterface api = retrofit.create(ApiInterface.class);
-        Call<ResponseBody> call = api.viewProfile(Prefs.getString("userId",""), "Bearer " + Prefs.getString("accessToken", ""));
+        Call<ResponseBody> call = api.viewProfile(Prefs.getString("userId", ""), "Bearer " + Prefs.getString("accessToken", ""));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     if (response.isSuccessful()) {
-                        pd.dismiss();
+                        shimmer1.cancel();
+                        shimmer2.cancel();
+                        shimmer3.cancel();
+                        shimmer4.cancel();
                         String string = response.body().string();
                         JSONObject jsonObject = new JSONObject(string);
                         JSONObject object = jsonObject.getJSONObject("user");
@@ -134,22 +136,23 @@ public class ProfileFragment extends Fragment {
                         String branch = object.getString("branch");
                         String college = object.getString("college");
                         Integer year = object.getInt("year");
-                        if (year==0)
-                        {
+                        if (year == 0) {
                             etYear.setText("N/A");
-                        }else {
+                        } else {
                             etYear.setText(Integer.toString(year));
                         }
                         etBranch.setText(branch);
                         etClg.setText(college);
                         etName.setText(name);
-                        Picasso.get().load(imageUrl).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(circleImageView);
+                        if (TextUtils.isEmpty(imageUrl))
+                            Picasso.get().load(R.drawable.ic_image_holder).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(circleImageView);
+                        else
+                            Picasso.get().load(imageUrl).placeholder(R.drawable.ic_image_holder).error(R.drawable.ic_image_holder).into(circleImageView);
                     } else if (response.code() == 502) {
                         MyApplication myApplication = new MyApplication();
                         myApplication.RefreshToken(Prefs.getString("refreshToken", ""), context);
                         FetchValue();
                     } else {
-                        pd.dismiss();
                         CustomToast customToast = new CustomToast();
                         customToast.ShowToast(context, "Error: Server is down..");
                     }
@@ -161,7 +164,6 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                pd.dismiss();
                 CustomToast customToast = new CustomToast();
                 customToast.ShowToast(context, "Failure: Server is down.." + t.getLocalizedMessage());
             }
@@ -185,10 +187,8 @@ public class ProfileFragment extends Fragment {
                 Exception error = result.getError();
                 CustomToast customToast = new CustomToast();
                 customToast.ShowToast(context, "Error occurred while choosing image " + error);
-            }
-            else {
-                CustomToast customToast = new CustomToast();
-                customToast.ShowToast(context, "Sb gya re");
+            } else {
+
             }
         }
     }

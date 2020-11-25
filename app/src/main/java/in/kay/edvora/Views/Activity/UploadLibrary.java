@@ -1,6 +1,5 @@
 package in.kay.edvora.Views.Activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,8 +29,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
-import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import in.kay.edvora.Api.ApiInterface;
 import in.kay.edvora.Application.MyApplication;
@@ -46,7 +47,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UploadLibrary extends AppCompatActivity {
     private static final int PICK_FILE_REQUEST = 999;
-    TextView tvSem, tvType, tvName,etSubject;
+    TextView tvSem, tvType, tvName, etSubject;
     EditText etTitle;
     ImageView ivSelect;
     RelativeLayout rl;
@@ -139,11 +140,10 @@ public class UploadLibrary extends AppCompatActivity {
                         }
                         DoSelectSubject();
                         pd.dismiss();
-                    }
-                    else {
+                    } else {
                         pd.dismiss();
-                        CustomToast customToast=new CustomToast();
-                        customToast.ShowToast(getBaseContext(),"Server down...");
+                        CustomToast customToast = new CustomToast();
+                        customToast.ShowToast(getBaseContext(), "Server down...");
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -154,8 +154,8 @@ public class UploadLibrary extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 pd.dismiss();
-                CustomToast customToast=new CustomToast();
-                customToast.ShowToast(getBaseContext(),"Server down...");
+                CustomToast customToast = new CustomToast();
+                customToast.ShowToast(getBaseContext(), "Server down...");
             }
         });
     }
@@ -178,7 +178,7 @@ public class UploadLibrary extends AppCompatActivity {
 
     private void SelectFile() {
         Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        String[] mimeTypes = {"text/csv", "application/pdf", "application/msword", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.openxmlformats-officedocument.presentationml.presentation"};
+        String[] mimeTypes = {"text/csv", "application/pdf", "application/msword", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.presentationml.presentation"};
         chooseIntent.setType("*/*");
         chooseIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(chooseIntent, PICK_FILE_REQUEST);
@@ -252,13 +252,34 @@ public class UploadLibrary extends AppCompatActivity {
             return;
         } else {
             long sizeinMb = getFileSize(uri) / 1024 / 1024;
-            if (sizeinMb < 10)
-                UploadImageToDatabase(uri);
-            else {
+            if (sizeinMb < 10) {
+                List<String> words = Arrays.asList(this.getResources().getStringArray(R.array.censored));
+                if (GetCensored(words, etTitle.getText().toString())) {
+                    CustomToast customToast = new CustomToast();
+                    customToast.ShowToast(UploadLibrary.this, "Censored Words are not allowed...");
+                } else {
+                    UploadImageToDatabase(uri);
+                }
+            } else {
                 CustomToast customToast = new CustomToast();
                 customToast.ShowToast(UploadLibrary.this, "Please use a document <10 MB.\nReduce further to " + Integer.toString((int) (sizeinMb - 10)) + " MB");
             }
         }
+    }
+
+    private boolean GetCensored(List<String> words, String strans) {
+        String string;
+        boolean isCensored = false;
+        for (String word : words) {
+            Pattern rx = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
+            strans = rx.matcher(strans).replaceAll(new String(new char[word.length()]).replace('\0', '*'));
+            string = strans;
+            if (string.contains("*"))
+                isCensored = true;
+            else
+                isCensored = false;
+        }
+        return isCensored;
     }
 
     private long getFileSize(Uri fileUri) {
@@ -302,11 +323,11 @@ public class UploadLibrary extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<ResponseBody> call = apiInterface.uploadFile(title, strYear, subject, doctype, imgUrl,"Bearer "+Prefs.getString("accessToken",""));
+        Call<ResponseBody> call = apiInterface.uploadFile(title, strYear, subject, doctype, imgUrl, "Bearer " + Prefs.getString("accessToken", ""));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("MYTAG", "onResponse: "+response.code());
+                Log.d("MYTAG", "onResponse: " + response.code());
                 if (response.isSuccessful()) {
                     pd.dismiss();
                     CustomToast customToast = new CustomToast();
