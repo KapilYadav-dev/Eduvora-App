@@ -21,7 +21,6 @@ import in.kay.edvora.Views.Fragments.HomeFragment;
 import in.kay.edvora.Views.Fragments.LibraryFragment;
 import in.kay.edvora.Views.Fragments.ProfileFragment;
 import in.kay.edvora.Views.Fragments.StudentClassroom;
-import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Fragment mFragment = null;

@@ -15,12 +15,6 @@
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#B4B4B4"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_bar" />
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"

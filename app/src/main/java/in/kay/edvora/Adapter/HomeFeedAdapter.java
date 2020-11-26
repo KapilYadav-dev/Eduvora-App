@@ -2,6 +2,7 @@ package in.kay.edvora.Adapter;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -30,12 +31,15 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import in.kay.edvora.Api.ApiInterface;
+import in.kay.edvora.Application.MyApplication;
 import in.kay.edvora.Models.HomeModel;
 import in.kay.edvora.Models.Id;
 import in.kay.edvora.Models.PostedBy;
@@ -43,6 +47,11 @@ import in.kay.edvora.R;
 import in.kay.edvora.Utils.CustomToast;
 import in.kay.edvora.Views.Activity.AnswerActivity;
 import in.kay.edvora.Views.Activity.Profile;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHolder> {
     List<HomeModel> list;
@@ -197,15 +206,57 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<HomeFeedAdapter.ViewHo
             txtIntent.putExtra(Intent.EXTRA_TEXT, list.get(position).getQuestion().substring(0, Math.min(list.get(position).getQuestion().length(), 160)) + "..." + "\n" + "-by  " + list.get(position).getPostedBy().getId().getName() + "\n" + "https://www.edvora.in/post/" + list.get(position).get_id());
             context.startActivity(Intent.createChooser(txtIntent, "Share"));
         });
-        holder.circleImageView.setOnClickListener(new View.OnClickListener() {
+        holder.circleImageView.setOnClickListener(view -> {
+            View image = holder.circleImageView;
+            View text = holder.tvName;
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
+            Intent intent = new Intent(context, Profile.class);
+            intent.putExtra("userId", userID);
+            context.startActivity(intent, options.toBundle());
+        });
+        holder.llBookmark.setOnClickListener(view -> {
+            DoBookMark(list.get(position).get_id());
+        });
+    }
+
+    private void DoBookMark(String id) {
+        final ProgressDialog pd = new ProgressDialog(context);
+        pd.setMax(100);
+        pd.setMessage("Adding post to saved Post...");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.show();
+        pd.setCancelable(false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.savePost(id,"Bearer "+Prefs.getString("accessToken",""));
+        call.enqueue(new retrofit2.Callback<ResponseBody>() {
             @Override
-            public void onClick(View view) {
-                View image = holder.circleImageView;
-                View text = holder.tvName;
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, Pair.create(image, "Profile"), Pair.create(text, "Name"));
-                Intent intent = new Intent(context, Profile.class);
-                intent.putExtra("userId", userID);
-                context.startActivity(intent, options.toBundle());
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful())
+                {
+                    pd.dismiss();
+                    CustomToast customToast=new CustomToast();
+                    customToast.ShowToast(context,"Added to saved posts...");
+                }else if (response.code()==502)
+                {
+                    MyApplication myApplication = new MyApplication();
+                    myApplication.RefreshToken(Prefs.getString("refreshToken", ""), context);
+                    DoBookMark(id);
+                }else {
+                    pd.dismiss();
+                    CustomToast customToast=new CustomToast();
+                    customToast.ShowToast(context,"Already added to your saved post..");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                pd.dismiss();
+                CustomToast customToast=new CustomToast();
+                customToast.ShowToast(context,"Failure "+t.getLocalizedMessage());
             }
         });
     }

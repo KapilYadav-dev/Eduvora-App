@@ -51,7 +51,7 @@
             android:textAllCaps="false"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/selector_et"
+            android:background="@drawable/ic_active"
             android:fontFamily="@font/gilroymedium"
             android:text="No"
             android:textColor="@color/colorPrimary"

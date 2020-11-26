@@ -2,16 +2,21 @@ package in.kay.edvora.Api;
 
 import java.util.List;
 
+import in.kay.edvora.Models.DeletePostRequestModel;
 import in.kay.edvora.Models.FindLibraryModel;
 import in.kay.edvora.Models.HomeModel;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiInterface {
@@ -52,6 +57,10 @@ public interface ApiInterface {
     @GET("feed/view")
     Call<List<HomeModel>> getFeed(@Header("Authorization") String header);
 
+    @FormUrlEncoded
+    @POST("feed/savepost")
+    Call<ResponseBody> savePost(@Field("feedId") String feedId, @Header("Authorization") String header);
+
     @GET("feed/view/{id}")
     Call<HomeModel> getParticularFeed(@Path("id") String id, @Header("Authorization") String header);
 
@@ -88,9 +97,8 @@ public interface ApiInterface {
     @POST("library/bookmarksubject")
     Call<ResponseBody> addSubject(@Field("subject") String subject, @Header("Authorization") String header);
 
-    @FormUrlEncoded
-    @DELETE("library/deletesubject")
-    Call<ResponseBody> deleteSubject(@Field("subject") String subject, @Header("Authorization") String header);
+    @HTTP(method = "DELETE", path = "library/deletesubject", hasBody = true)
+    Call<ResponseBody> deleteSubject(@Body DeletePostRequestModel model,@Header("Authorization") String header);
 
     @GET("profile/getbookmarks/{type}")
     Call<List<String>> getBookmarks(@Path("type") String type, @Header("Authorization") String header);

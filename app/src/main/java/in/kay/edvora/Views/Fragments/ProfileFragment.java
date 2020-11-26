@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -100,12 +99,11 @@ public class ProfileFragment extends Fragment {
             } else
                 difference = null;
 
-            Toast.makeText(context, "duff is"+difference, Toast.LENGTH_SHORT).show();
             if (difference == null || difference > 7)
                 ChoosePhoto();
             else {
                 CustomToast customToast = new CustomToast();
-                customToast.ShowToast(context, "You can change your profile photo after "+Integer.toString(7-difference)+" days...");
+                customToast.ShowToast(context, "You can change your profile photo after " + Integer.toString(7 - difference) + " days...");
             }
         });
         logout.setOnClickListener(view -> {
