@@ -91,4 +91,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @DELETE("library/deletesubject")
     Call<ResponseBody> deleteSubject(@Field("subject") String subject, @Header("Authorization") String header);
+
+    @GET("profile/getbookmarks/{type}")
+    Call<List<String>> getBookmarks(@Path("type") String type, @Header("Authorization") String header);
 }

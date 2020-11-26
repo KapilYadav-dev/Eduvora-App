@@ -16,14 +16,69 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <it.sephiroth.android.library.bottomnavigation.BottomNavigation
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#B4B4B4"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar" />
+    <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:background="@color/white"
+        android:weightSum="4"
+        android:layout_height="59dp"
         android:layout_gravity="start"
-        app:bbn_badgeProvider="@string/bbn_badgeProvider"
-        app:bbn_entries="@menu/tabs"
-        app:layout_behavior="@string/bbn_tablet_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:id="@+id/rl_homeTab"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/homeTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_selected_home"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_library"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/libraryTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unselected_library"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_class"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/classroomTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unselected_classroom"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/profileTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unselected_profile"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

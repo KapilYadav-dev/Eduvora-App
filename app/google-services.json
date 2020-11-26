@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "806236527140",
+    "firebase_url": "https://edvora-b4906.firebaseio.com",
+    "project_id": "edvora-b4906",
+    "storage_bucket": "edvora-b4906.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806236527140:android:eee563046e3935a98e96b1",
+        "android_client_info": {
+          "package_name": "in.kay.edvora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "806236527140-vd3iql52h3kqiq1tojtbomgrkdos9nu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABNtEN5qwgFAEp2VLlS4E8SMAgBNAqEAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "806236527140-vd3iql52h3kqiq1tojtbomgrkdos9nu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
