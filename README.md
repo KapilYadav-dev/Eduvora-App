@@ -1,7 +1,6 @@
 # Edvora-App
 Edvora app like Quora which consist Quora QnA with Meet classroom where Faculty can host their meetings and Library Section.
 # Thing's which I learnt from this Project
-</br>
 MVVM app pattern.</br>
 Deep linking in Android app.</br>
 Used Shared Transition.</br>
