@@ -7,4 +7,4 @@ Used Shared Transition.</br>
 Made a custom library <a href="https://github.com/KapilYadav-dev/Censory">Censory</a></br>
 Used Jitsi sdk for hosting meet.</br>
 
-![alt text](https://raw.githubusercontent.com/KapilYadav-dev/Edvora-App/main/image1.png)
+![alt text](https://github.com/KapilYadav-dev/Eduvora-App/blob/main/image1.png)
